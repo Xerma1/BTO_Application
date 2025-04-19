@@ -2,7 +2,7 @@ package main.control;
 
 import main.boundary.*;
 
-public class UsergroupUIFactory {
+public class UserGroupUIFactory {
     public static IusergroupUI getUI(String usergroup) {
         return switch (usergroup) {
             case "applicant" -> new ApplicantUI();

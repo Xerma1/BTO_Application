@@ -1,6 +1,6 @@
 package main.boundary;
 
-import main.control.DataManager;
+import main.control.dataManagers.UserManager;
 import main.control.viewFilters.*;
 import main.entity.Manager;
 import main.entity.User;
@@ -30,15 +30,11 @@ public class ManagerUI implements IusergroupUI {
     }
 
     @Override
-    public void runMenu(Scanner scanner, String username, String userID) {
-         // Create instance of manager class
-            User userdata = DataManager.getFetch(userID);
-            String name = userdata.getName();
-            String ID = userdata.getUserID();
-            int age = userdata.getAge();
-            boolean married = userdata.getMarried();
-        
-            Manager manager = new Manager(name, ID, age, married);
+    public void runMenu(Scanner scanner, User user) {
+
+        // Create instance of manager class
+        Manager manager = (Manager) UserManager.createUser(user);
+        String username = manager.getName();
        
         // Switch statement to process each option
         int choice;
@@ -53,18 +49,18 @@ public class ManagerUI implements IusergroupUI {
 
             switch (choice){
                 case 1 -> {
-                    manager.changePassword();
+                    manager.changePassword(scanner);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
                 }
-
                 case 2 -> {
-                    IviewFilter viewInterface = ViewFilterFactory.getViewFilter("all");
+                    IViewFilter viewInterface = ViewFilterFactory.getViewFilter("all");
                     System.out.println("Showing all projects: ");
                     System.out.println();
                     viewInterface.view();
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-
                 case 12 -> System.out.println("Exiting....");
                 default -> System.out.print("default");
             }

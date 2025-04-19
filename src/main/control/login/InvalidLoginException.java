@@ -1,4 +1,4 @@
-package main.control;
+package main.control.login;
 
 public class InvalidLoginException extends Exception {
     public InvalidLoginException(String message) {

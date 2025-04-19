@@ -1,9 +1,9 @@
 package main;
 
-import main.control.InvalidLoginException;
-import main.control.DataManager;
-import main.control.LoginManager;
-import main.control.UsergroupUIFactory;
+import main.control.UserGroupUIFactory;
+import main.control.dataManagers.UserManager;
+import main.control.login.InvalidLoginException;
+import main.control.login.LoginManager;
 import main.entity.User;
 import main.boundary.*;
 
@@ -46,6 +46,7 @@ public class BtoApp {
                 };
             } catch (Exception e){
                 System.out.print("Invalid input. Please enter valid number. Input: ");
+                scanner.nextLine(); // Clear the invalid input
             }
         }  
 
@@ -55,7 +56,7 @@ public class BtoApp {
         do {
             try {
                 System.out.print("Enter user ID (type 'return' to go back to previous page): ");
-                userID = scanner.nextLine();
+                userID = scanner.nextLine().trim();
 
                 // Handle program restart if user types in "return"
                 if (userID.equalsIgnoreCase("return")) {
@@ -64,13 +65,13 @@ public class BtoApp {
                 }
 
                 System.out.print("Enter password: ");
-                String password = scanner.nextLine();
+                String password = scanner.nextLine().trim();
 
                 isLoggedIn = LoginManager.login(userID, password, usergroup);
                 
                 } catch (InvalidLoginException e) {
                     System.out.println(e.getMessage()); // Print the custom exception message
-                    }
+                }
             } while (isLoggedIn == false);
         
         if (usergroup.isEmpty()) {
@@ -83,12 +84,11 @@ public class BtoApp {
         System.out.println("");
         
         // Get the username associated with the userID to be passed into userUI.printUI()
-        User userdata = DataManager.getFetch(userID);
-        String username = userdata.getName();
+        User userdata = UserManager.fetch(userID);
         
         // Run menu based on the usergroup using dependency injection
-        IusergroupUI userUI = UsergroupUIFactory.getUI(usergroup);
-        userUI.runMenu(scanner, username, userID);
+        IusergroupUI userUI = UserGroupUIFactory.getUI(usergroup);
+        userUI.runMenu(scanner, userdata);
 
         scanner.close();
         }
