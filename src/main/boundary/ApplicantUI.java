@@ -1,6 +1,7 @@
 package main.boundary;
 
 import main.control.dataManagers.UserManager;
+import main.control.InputManager;
 import main.control.dataManagers.ApplicationManager;
 import main.control.dataManagers.BookingManager;
 import main.control.dataManagers.EnquiryManager;
@@ -40,9 +41,7 @@ public class ApplicantUI implements IusergroupUI {
             // Print UI
             System.out.println("<< Logged in as applicant: " + username + " >>");
             System.out.println(applicantMenu);
-            System.out.print("Input: ");
-            choice = scanner.nextInt();
-            scanner.nextLine();
+            choice = InputManager.promptUserChoice(scanner, 1, 10);
 
             switch (choice) {
                 case 1 -> {
@@ -86,7 +85,7 @@ public class ApplicantUI implements IusergroupUI {
                     scanner.nextLine();
                 }
                 case 8 -> {
-                    Boolean isSuccessful = EnquiryManager.askEnquiry(applicant, scanner);
+                    Boolean isSuccessful = EnquiryManager.createEnquiry(applicant, scanner);
                     if (!isSuccessful) {
                         System.out.println("Enquiry not submitted.");
                     }
@@ -96,7 +95,9 @@ public class ApplicantUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-                
+                case 9 -> {
+                    EnquiryManager.viewEnquiries(applicant, scanner);
+                }
                 case 10 -> System.out.println("Exiting....");
                 default -> System.out.print("default");
             }

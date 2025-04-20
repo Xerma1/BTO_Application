@@ -93,7 +93,7 @@ public class ProjectManager extends DataManager {
 
 
     public static String askProjName(Scanner scanner) {
-        System.out.print("Which project would you like to apply for?: ");
+        System.out.print("Project Name: ");
         return scanner.nextLine().trim();
     }
     

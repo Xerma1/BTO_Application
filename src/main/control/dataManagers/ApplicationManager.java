@@ -50,6 +50,10 @@ public class ApplicationManager extends DataManager {
         // Get valid projects based on filter type
         IViewFilter viewInterface = ViewFilterFactory.getViewFilter(applicant.filterType);
         List<Project> validProjects = viewInterface.getValidProjects();
+        if (validProjects == null || validProjects.isEmpty()) {
+            System.out.println("No projects available.");
+            return false;
+        }
 
         // Ask for project name
         String projName = ProjectManager.askProjName(scanner);
