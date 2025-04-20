@@ -19,7 +19,8 @@ public class BookingManager {
     private static enum status {
         PENDING, SUCCESSFUL, UNSUCCESSFUL, BOOKED
     }
-     public static boolean initiateBooking(Applicant applicant, Scanner scanner) {
+    
+    public static boolean initiateBooking(Applicant applicant, Scanner scanner) {
 
         // Get the application details of applicant
         String[] application = null;
@@ -40,11 +41,12 @@ public class BookingManager {
             return false;
         }
 
-        // Check if applicant is already booking a flat
+        // Check if applicant has already requested to book/booked a flat
 
         boolean hasBooked = hasRequestedBooking(applicant);
-        if (hasBooked){
-            System.out.println("You have already booked a flat");
+      
+        if (hasBooked || application[COL_STATUS].equals(status.BOOKED.name())) {
+            System.out.println("You have already requested to book/booked a flat");
             return false;
         }
 
@@ -115,4 +117,5 @@ public class BookingManager {
         }
         return false;
     }
+
 }

@@ -1,13 +1,18 @@
 package main.boundary;
 
+
+import main.control.ProjectSorter;
+import main.control.InputManager;
 import main.control.dataManagers.UserManager;
 import main.control.dataManagers.ProjectManager;
 import main.control.dataManagers.OfficerManager;
 import main.control.viewFilters.*;
 import main.entity.Manager;
+import main.entity.Project;
 import main.entity.User;
 import main.control.dataManagers.DataManager;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ManagerUI implements IusergroupUI {
@@ -39,10 +44,8 @@ public class ManagerUI implements IusergroupUI {
         do {
             System.out.println("<< Logged in as manager: " + username + " >>");
             System.out.println(managerMenu);
-            System.out.print("Input: ");
+            choice = InputManager.promptUserChoice(scanner, 1, 12);
 
-            choice = scanner.nextInt();
-            scanner.nextLine(); // consume leftover newline
 
             switch (choice) {
                 case 1 -> {
@@ -52,10 +55,27 @@ public class ManagerUI implements IusergroupUI {
                 }
 
                 case 2 -> {
-                    IViewFilter viewInterface = ViewFilterFactory.getViewFilter("all");
-                    System.out.println("Showing all projects:");
+                    IFilterProjectsByUserGroup viewInterface1 = ViewFilterFactory.getProjectByMartialStatus("All");
+                    System.out.println("Showing all active projects available to you: ");
                     System.out.println();
-                    viewInterface.view();
+                    List<Project> projects = viewInterface1.getValidProjects(); // First get valid projects
+
+                    // Sort them by applicant's existing sortType
+                    projects = ProjectSorter.sort(projects, manager); 
+                    
+                    // Then view them using the filter type
+                    IViewFilter viewInterface2 = ViewFilterFactory.getViewFilterType("All"); 
+                    viewInterface2.view(projects);
+                    
+                    // Ask users if they want to sort the projects in a new way
+                    System.out.println("Would you like to sort the projects in a different way? (y/n)");
+                    String sortChoice = scanner.nextLine();
+                    if (sortChoice.equalsIgnoreCase("y")) {
+                        SortAndReturnUI sortAndReturnUI = new SortAndReturnUI();
+                        sortAndReturnUI.viewSortedProject(scanner, projects, manager);
+                    } else {
+                        System.out.println("Returning to main menu...");
+                    }
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }

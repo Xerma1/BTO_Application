@@ -1,13 +1,18 @@
 package main.boundary;
 
+
+import main.control.ProjectSorter;
+import main.control.InputManager;
 import main.control.dataManagers.ApplicationManager;
 import main.control.dataManagers.BookingManager;
 import main.control.dataManagers.EnquiryManager;
 import main.control.dataManagers.UserManager;
 import main.control.viewFilters.*;
 import main.entity.Officer;
+import main.entity.Project;
 import main.entity.User;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class OfficerUI implements IusergroupUI {
@@ -31,11 +36,10 @@ public class OfficerUI implements IusergroupUI {
                 9.  Apply for BTO project as an applicant
                 10. View details of applied BTO project and application status
                 11. Request booking of flat
-                12. View receipt of booked flat
-                13. Request withdrawl from BTO application/booking
-                14. Submit enquiry 
-                15. View/edit/delete enquiries 
-                16. Exit
+                12. Request withdrawl from BTO application/booking
+                13. Submit enquiry 
+                14. View/edit/delete enquiries 
+                15. Exit
                 
                 """;
 
@@ -52,10 +56,7 @@ public class OfficerUI implements IusergroupUI {
             // Print UI
             System.out.println("<< Logged in as officer: " + username + " >>");
             System.out.println(officerMenu);
-            System.out.print("Input: ");
-
-            choice = scanner.nextInt();
-            scanner.nextLine();
+            choice = InputManager.promptUserChoice(scanner, 1, 16);
 
             switch (choice){
                 case 1 -> {
@@ -64,10 +65,27 @@ public class OfficerUI implements IusergroupUI {
                     scanner.nextLine();
                 }
                 case 2 -> {
-                    IViewFilter viewInterface = ViewFilterFactory.getViewFilter(officer.getMarried());
-                    System.out.println("Showing all active projects: ");
+                    IFilterProjectsByUserGroup viewInterface1 = ViewFilterFactory.getProjectByMartialStatus(officer.getMarried());
+                    System.out.println("Showing all active projects available to you: ");
                     System.out.println();
-                    viewInterface.view();
+                    List<Project> projects = viewInterface1.getValidProjects(); // First get valid projects
+
+                    // Sort them by applicant's existing sortType
+                    projects = ProjectSorter.sort(projects, officer); 
+                    
+                    // Then view them using the filter type
+                    IViewFilter viewInterface2 = ViewFilterFactory.getViewFilterType(officer.getMarried()); 
+                    viewInterface2.view(projects);
+                    
+                    // Ask users if they want to sort the projects in a new way
+                    System.out.println("Would you like to sort the projects in a different way? (y/n)");
+                    String sortChoice = scanner.nextLine();
+                    if (sortChoice.equalsIgnoreCase("y")) {
+                        SortAndReturnUI sortAndReturnUI = new SortAndReturnUI();
+                        sortAndReturnUI.viewSortedProject(scanner, projects, officer);
+                    } else {
+                        System.out.println("Returning to main menu...");
+                    }
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
@@ -77,7 +95,7 @@ public class OfficerUI implements IusergroupUI {
                     scanner.nextLine();
                 }
                 case 6 -> {
-                    EnquiryManager.viewEnquiries(officer.getHandling());
+                    EnquiryManager.viewEnquiries(officer);
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
@@ -106,8 +124,10 @@ public class OfficerUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-                case 14 -> {
-                    Boolean isSuccessful = EnquiryManager.askEnquiry(officer, scanner);
+
+                case 13 -> {
+                    Boolean isSuccessful = EnquiryManager.createEnquiry(officer, scanner);
+
                     if (!isSuccessful) {
                         System.out.println("Enquiry not submitted.");
                     }
@@ -117,10 +137,10 @@ public class OfficerUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-                case 16 -> System.out.println("Exiting....");
+                case 15 -> System.out.println("Exiting....");
                 default -> System.out.print("default");
             }
-        } while (choice != 16);
+        } while (choice != 15);
         
     }
 

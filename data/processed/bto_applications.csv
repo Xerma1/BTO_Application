@@ -1,7 +1,7 @@
 
 Name,NRIC,Age,Marital Status,applied project,room type,price,open date,close date,application status,manager,officers
-John,S1234567A,35,Single,acacia breeze,2-room,350000,3/15/2025,6/20/2025,SUCCESSFUL
+John,S1234567A,35,Single,Acacia Breeze,2-room,350000,3/15/2025,6/20/2025,SUCCESSFUL
 David,T1234567J,29,Single,Acacia Breeze,2-room,350000,3/15/2025,6/20/2025,PENDING,Jessica,Daniel
 Rachel,S3456789E,25,Single,Acacia Breeze,2-room,350000,3/15/2025,6/20/2025,PENDING,Jessica
 Grace,S9876543C,37,Married,Sandy Heights,3-room,450000,2/15/2025,6/20/2025,PENDING,Jessica
-
+Sarah,T7654321B,40,Married,Cedar Grove,3-room,445000,1/10/2025,9/15/2025,PENDING,Jessica

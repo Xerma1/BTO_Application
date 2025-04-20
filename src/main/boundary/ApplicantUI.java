@@ -1,15 +1,20 @@
 package main.boundary;
 
 import main.control.dataManagers.UserManager;
+import main.control.ProjectSorter;
+import main.control.InputManager;
 import main.control.dataManagers.ApplicationManager;
 import main.control.dataManagers.BookingManager;
 import main.control.dataManagers.EnquiryManager;
+import main.control.viewFilters.IFilterProjectsByUserGroup;
 import main.control.viewFilters.IViewFilter;
 import main.control.viewFilters.ViewFilterFactory;
 import main.entity.Applicant;
 import main.entity.User;
+import main.entity.Project;
 
 import java.util.Scanner;
+import java.util.List;
 
 public class ApplicantUI implements IusergroupUI {
 
@@ -20,11 +25,10 @@ public class ApplicantUI implements IusergroupUI {
                 3.  Apply for BTO project
                 4.  View details of applied BTO project and application status
                 5.  Request booking of flat
-                6.  View receipt of booked flat
-                7.  Request withdrawl from BTO application/booking
-                8.  Submit enquiry
-                9.  View/edit/delete enquiries
-                10. Exit
+                6.  Request withdrawl from BTO application/booking
+                7.  Submit enquiry
+                8.  View/edit/delete enquiries
+                9. Exit
 
                 """;
     @Override
@@ -40,9 +44,7 @@ public class ApplicantUI implements IusergroupUI {
             // Print UI
             System.out.println("<< Logged in as applicant: " + username + " >>");
             System.out.println(applicantMenu);
-            System.out.print("Input: ");
-            choice = scanner.nextInt();
-            scanner.nextLine();
+            choice = InputManager.promptUserChoice(scanner, 1, 10);
 
             switch (choice) {
                 case 1 -> {
@@ -51,10 +53,27 @@ public class ApplicantUI implements IusergroupUI {
                     scanner.nextLine();
                 }
                 case 2 -> {
-                    IViewFilter viewInterface = ViewFilterFactory.getViewFilter(applicant.getMarried());
+                    IFilterProjectsByUserGroup viewInterface1 = ViewFilterFactory.getProjectByMartialStatus(applicant.getMarried());
                     System.out.println("Showing all active projects available to you: ");
                     System.out.println();
-                    viewInterface.view();
+                    List<Project> projects = viewInterface1.getValidProjects(); // First get valid projects
+
+                    // Sort them by applicant's existing sortType
+                    projects = ProjectSorter.sort(projects, applicant); 
+                    
+                    // Then view them using the filter type
+                    IViewFilter viewInterface2 = ViewFilterFactory.getViewFilterType(applicant.getMarried()); 
+                    viewInterface2.view(projects);
+                    
+                    // Ask users if they want to sort the projects in a new way
+                    System.out.println("Would you like to sort the projects in a different way? (y/n)");
+                    String sortChoice = scanner.nextLine();
+                    if (sortChoice.equalsIgnoreCase("y")) {
+                        SortAndReturnUI sortAndReturnUI = new SortAndReturnUI();
+                        sortAndReturnUI.viewSortedProject(scanner, projects, applicant);
+                    } else {
+                        System.out.println("Returning to main menu...");
+                    }
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
@@ -85,8 +104,22 @@ public class ApplicantUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-                case 8 -> {
-                    Boolean isSuccessful = EnquiryManager.askEnquiry(applicant, scanner);
+
+                case 6 -> {
+                    Boolean isSuccessful = ApplicationManager.requestWithdrawal(applicant, scanner);
+                    if (!isSuccessful) {
+                        System.out.println("Withdrawl request is unsuccessful.");
+                    }
+                    else {
+                        System.out.println("Withdrawl request successfully lodged!");
+                    }
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 7 -> {
+                    Boolean isSuccessful = EnquiryManager.createEnquiry(applicant, scanner);
+
                     if (!isSuccessful) {
                         System.out.println("Enquiry not submitted.");
                     }
@@ -96,11 +129,15 @@ public class ApplicantUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-                
-                case 10 -> System.out.println("Exiting....");
+
+                case 8 -> {
+                    EnquiryManager.viewEnquiries(applicant, scanner);
+                }
+                case 9 -> System.out.println("Exiting....");
+
                 default -> System.out.print("default");
             }
-        } while (choice != 10);
+        } while (choice != 9);
         
     }
 

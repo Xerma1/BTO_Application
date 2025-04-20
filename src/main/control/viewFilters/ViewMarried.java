@@ -7,10 +7,9 @@ import main.entity.Project;
 import java.util.List;
 import java.util.ArrayList;
 
-public class ViewMarried implements IViewFilter {
-
-    public void view() {
-        List<Project> projects = ProjectManager.getFetchAll();
+public class ViewMarried implements IViewFilter, IFilterProjectsByUserGroup {
+    @Override
+    public void view(List<Project> projects) {
 
         if (projects == null || projects.isEmpty()) {
             System.out.println("No projects available.");
@@ -43,6 +42,7 @@ public class ViewMarried implements IViewFilter {
         System.out.println();
     }
 
+    @Override
     public List<Project> getValidProjects() {
         List<Project> projects = ProjectManager.getFetchAll();
 

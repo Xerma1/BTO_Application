@@ -11,7 +11,7 @@ public class Officer extends Applicant {
 
     //constructor
     public Officer(String name, String userID, int age, String married, String password, String accessLevel, String filterType) {
-        super(name, userID, age, married, password, accessLevel, filterType);
+        super(name, userID, age, married, password, accessLevel,filterType);
     }
 
     public List<Project> getHandling() {
