@@ -87,7 +87,7 @@ public class BtoApp {
         User userdata = UserManager.fetch(userID);
         
         // Run menu based on the usergroup using dependency injection
-        IusergroupUI userUI = UserGroupUIFactory.getUI(usergroup);
+        IUserGroupUI userUI = UserGroupUIFactory.getUI(usergroup);
         userUI.runMenu(scanner, userdata);
 
         scanner.close();

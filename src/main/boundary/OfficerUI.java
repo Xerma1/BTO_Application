@@ -15,7 +15,7 @@ import main.entity.User;
 import java.util.List;
 import java.util.Scanner;
 
-public class OfficerUI implements IusergroupUI {
+public class OfficerUI implements IUserGroupUI {
 
     private static final String officerMenu = """
                 
@@ -99,6 +99,17 @@ public class OfficerUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
+                case 7 -> {
+                    boolean isSuccessful = EnquiryManager.replyEnquiry(officer, scanner);
+                    if (!isSuccessful) {
+                        System.out.println("Reply unsuccessful.");
+                    }
+                    else {
+                        System.out.println("Reply successful!");
+                    }
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
                 case 9 -> {
                     if (ApplicationManager.applyBTO(officer, scanner)) {
                         System.out.println("Applied successfully!");
@@ -124,7 +135,6 @@ public class OfficerUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-
                 case 13 -> {
                     Boolean isSuccessful = EnquiryManager.createEnquiry(officer, scanner);
 
@@ -134,6 +144,11 @@ public class OfficerUI implements IusergroupUI {
                     else {
                         System.out.println("Enquiry submitted!");
                     }
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+                case 14 -> {
+                    EnquiryManager.viewEditDeleteEnquiries(officer, scanner);
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }

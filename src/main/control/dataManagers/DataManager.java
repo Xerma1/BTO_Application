@@ -51,7 +51,14 @@ public class DataManager {
     public static void writeCSV(String filePath, List<String[]> rows) throws IOException{
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
             for (String[] row : rows) {
-                bw.write(String.join(",", row));
+                List<String> quotedFields = new ArrayList<>();
+                for (String field : row) {
+                    // Escape inner quotes by doubling them
+                    String escaped = field.replace("\"", "\"\"");
+                    // Wrap the entire field in quotes
+                    quotedFields.add("\"" + escaped + "\"");
+                }
+                bw.write(String.join(",", quotedFields));
                 bw.newLine();
             }
         } 
