@@ -48,7 +48,7 @@ public class ApplicationManager extends DataManager {
 
         // Cleared to proceed with application
         // Get valid projects based on filter type
-        IViewFilter viewInterface = ViewFilterFactory.getViewFilter(applicant.filterType);
+        IViewFilter viewInterface = ViewFilterFactory.getViewFilter(applicant.getMarried());
         List<Project> validProjects = viewInterface.getValidProjects();
 
         // Ask for project name
@@ -100,7 +100,7 @@ public class ApplicationManager extends DataManager {
                 applicant.getName(),
                 applicant.getUserID(),
                 String.valueOf(applicant.getAge()),
-                applicant.getMarried() ? "Married" : "Single",
+                applicant.getMarried(),
                 projName,
                 roomType,
                 roomDetails[2], // Price

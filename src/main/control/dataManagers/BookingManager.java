@@ -42,7 +42,7 @@ public class BookingManager {
 
         // Check if applicant is already booking a flat
 
-        boolean hasBooked = hasBooked(applicant);
+        boolean hasBooked = hasRequestedBooking(applicant);
         if (hasBooked){
             System.out.println("You have already booked a flat");
             return false;
@@ -78,7 +78,7 @@ public class BookingManager {
         // Finish
     }
 
-    public static boolean hasBooked(Applicant applicant){
+    public static boolean hasRequestedBooking(Applicant applicant){
         // Check if applicant is already booking a flat
         List<String[]> bookingRequests;
         try {
@@ -90,6 +90,25 @@ public class BookingManager {
         if (bookingRequests != null) {
             for (String[] booking : bookingRequests) {
                 if (booking.length > 1 && booking[0].trim().equals(applicant.getUserID())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasSuccessfullyBooked(Applicant applicant){
+        // Check if applicant is in booking_rquest.csv
+        List<String[]> bookingRequests;
+        try {
+            bookingRequests = DataManager.readCSV(FILEPATH_BOOKING);
+        } catch (IOException e) {
+            System.out.println("Error reading booking requests: " + e.getMessage());
+            return false;
+        }
+        if (bookingRequests != null) {
+            for (String[] booking : bookingRequests) {
+                if (booking[0].trim().equalsIgnoreCase(applicant.getUserID()) && booking[4].trim().equalsIgnoreCase(status.BOOKED.name())) {
                     return true;
                 }
             }

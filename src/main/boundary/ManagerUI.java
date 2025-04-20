@@ -6,6 +6,7 @@ import main.control.dataManagers.OfficerManager;
 import main.control.viewFilters.*;
 import main.entity.Manager;
 import main.entity.User;
+import main.control.dataManagers.DataManager;
 
 import java.util.Scanner;
 
@@ -29,19 +30,14 @@ public class ManagerUI implements IusergroupUI {
                 """;
 
     @Override
-    public void runMenu(Scanner scanner, User userdata) {
-        Manager manager = new Manager(
-            userdata.getName(),
-            userdata.getUserID(),
-            userdata.getAge(),
-            userdata.getMarried(),
-            userdata.getPassword(),
-            userdata.getAccessLevel()
-        );
+    public void runMenu(Scanner scanner, User user) {
+
+        Manager manager = (Manager) UserManager.createUser(user);
+        String username = manager.getName();
 
         int choice;
         do {
-            System.out.println("<< Logged in as manager: " + userdata.getName() + " >>");
+            System.out.println("<< Logged in as manager: " + username + " >>");
             System.out.println(managerMenu);
             System.out.print("Input: ");
 
@@ -49,7 +45,11 @@ public class ManagerUI implements IusergroupUI {
             scanner.nextLine(); // consume leftover newline
 
             switch (choice) {
-                case 1 -> manager.changePassword(scanner);
+                case 1 -> {
+                    manager.changePassword(scanner);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
 
                 case 2 -> {
                     IViewFilter viewInterface = ViewFilterFactory.getViewFilter("all");

@@ -17,6 +17,7 @@ public class UserManager extends DataManager {
     private static final int COL_MARTIAL_STATUS = 3;
     private static final int COL_PASSWORD = 4;
     private static final int COL_ACCESS_LEVEL = 5;
+    private static final int COL_FILTER_TYPE = 6; // Assuming filter type is in the 7th column
 
     // Private method to fetch sensitive user data
     private static User _fetch(String userID) {
@@ -32,10 +33,11 @@ public class UserManager extends DataManager {
             if (user[COL_USER_ID].equals(userID)) { // Find user using userID   
                 String name = user[COL_NAME];
                 int age = Integer.parseInt(user[COL_AGE]);
-                boolean married = user[COL_MARTIAL_STATUS].equalsIgnoreCase("married"); // Convert marital status to boolean
+                String married = user[COL_MARTIAL_STATUS]; // Convert marital status to boolean
                 String password = user[COL_PASSWORD]; 
-                String accessLevel = user[COL_ACCESS_LEVEL];              
-                return new User(name, userID, age, married, password, accessLevel); // Return User object
+                String accessLevel = user[COL_ACCESS_LEVEL];
+                String filterType = user[COL_FILTER_TYPE]; // Assuming filter type is in the 7th column              
+                return new User(name, userID, age, married, password, accessLevel, filterType); // Return User object
             }
         }
         return null; // Return null if user not found
@@ -78,16 +80,17 @@ public class UserManager extends DataManager {
         String name = user.getName();
         String userID = user.getUserID();
         int age = user.getAge();
-        boolean married = user.getMarried();
+        String married = user.getMarried();
         String password = user.getPassword();
         String accessLevel = user.getAccessLevel();
+        String filterType = user.getFilterType();
         switch (accessLevel) {
             case "applicant":
-                return new Applicant(name, userID, age, married, password, accessLevel);
+                return new Applicant(name, userID, age, married, password, accessLevel, filterType);
             case "officer":
-                return new Officer(name, userID, age, married, password, accessLevel);
+                return new Officer(name, userID, age, married, password, accessLevel, filterType);
             case "manager":
-                return new Manager(name, userID, age, married, password, accessLevel);
+                return new Manager(name, userID, age, married, password, accessLevel, filterType);
             default:
                 System.out.println("Invalid access level. User not created.");
                 return null;
@@ -99,4 +102,3 @@ public class UserManager extends DataManager {
         UserManager._writePassword(userID, newPassword);
     }
 }
-
