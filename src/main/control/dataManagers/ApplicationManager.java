@@ -51,6 +51,10 @@ public class ApplicationManager extends DataManager {
         // Get valid projects based on filter type
         IFilterProjectsByUserGroup viewInterface = ViewFilterFactory.getProjectByMartialStatus(applicant.getMarried());
         List<Project> validProjects = viewInterface.getValidProjects();
+        if (validProjects == null || validProjects.isEmpty()) {
+            System.out.println("No projects available.");
+            return false;
+        }
 
         // Ask for project name
         String projName = ProjectManager.askProjName(scanner);

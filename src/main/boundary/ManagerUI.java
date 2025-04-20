@@ -1,6 +1,8 @@
 package main.boundary;
 
+
 import main.control.ProjectSorter;
+import main.control.InputManager;
 import main.control.dataManagers.UserManager;
 import main.control.viewFilters.*;
 import main.entity.Manager;
@@ -42,10 +44,7 @@ public class ManagerUI implements IusergroupUI {
             // Print UI
             System.out.println("<< Logged in as manager: " + username + " >>");
             System.out.println(managerMenu);
-            System.out.print("Input: ");
-
-            choice = scanner.nextInt();
-            scanner.nextLine();
+            choice = InputManager.promptUserChoice(scanner, 1, 12);
 
             switch (choice){
                 case 1 -> {
