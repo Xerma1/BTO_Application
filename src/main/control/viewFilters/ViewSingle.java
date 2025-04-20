@@ -7,11 +7,10 @@ import main.entity.Project;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewSingle implements IViewFilter {
+public class ViewSingle implements IViewFilter, IFilterProjectsByUserGroup {
 
     @Override
-    public void view() {
-        List<Project> projects = ProjectManager.getFetchAll();
+    public void view(List<Project> projects) {
 
         if (projects == null || projects.isEmpty()) {
             System.out.println("No projects available.");

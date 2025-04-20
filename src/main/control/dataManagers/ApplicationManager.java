@@ -1,6 +1,6 @@
 package main.control.dataManagers;
 
-import main.control.viewFilters.IViewFilter;
+import main.control.viewFilters.IFilterProjectsByUserGroup;
 import main.control.viewFilters.ViewFilterFactory;
 import main.control.TimeManager;
 import main.entity.Application.ApplicationStatus;
@@ -15,6 +15,7 @@ import java.util.Scanner;
 public class ApplicationManager extends DataManager {
     private static final String APPL_CSV_PATH = "data/processed/bto_applications.csv";
     private static final String OFF_RSG_PATH = "data/processed/officer_registrations.csv";
+    private static final String WITHDRAWAL_PATH = "data/processed/withdrawal_requests.csv";
 
     private static List<String[]> fetchAllApplications() {
         List<String[]> rows = null;
@@ -48,7 +49,7 @@ public class ApplicationManager extends DataManager {
 
         // Cleared to proceed with application
         // Get valid projects based on filter type
-        IViewFilter viewInterface = ViewFilterFactory.getViewFilter(applicant.filterType);
+        IFilterProjectsByUserGroup viewInterface = ViewFilterFactory.getProjectByMartialStatus(applicant.getMarried());
         List<Project> validProjects = viewInterface.getValidProjects();
         if (validProjects == null || validProjects.isEmpty()) {
             System.out.println("No projects available.");
@@ -104,7 +105,7 @@ public class ApplicationManager extends DataManager {
                 applicant.getName(),
                 applicant.getUserID(),
                 String.valueOf(applicant.getAge()),
-                applicant.getMarried() ? "Married" : "Single",
+                applicant.getMarried(),
                 projName,
                 roomType,
                 roomDetails[2], // Price
@@ -141,7 +142,7 @@ public class ApplicationManager extends DataManager {
     }
 
 
-    public static String hasUserApplied(String userId) {
+    public static String hasUserApplied(String userId) { // Perhaps rename to getProjectNameByUserId
         List<String[]> applications = getFetchAllApplications();
 
         if (applications == null || applications.isEmpty()) {
@@ -157,7 +158,56 @@ public class ApplicationManager extends DataManager {
         return null; // User has not applied for any project
     }
 
+    public static boolean requestWithdrawal(Applicant applicant, Scanner scanner) {
+        // Check if user has applied for a project. If not, return false.
+        String projname = ApplicationManager.hasUserApplied(applicant.getUserID());
+        if(projname == null){
+            System.out.println("You have not applied for any project.");
+            return false;
+        }
+        // Check is the time of withdrawal is within the opening and closing date of the project
+        Project project = ProjectManager.getProjectByName(projname);
+        if (!TimeManager.isValidDate(project.getOpenDate().trim(), project.getCloseDate().trim())) {
+            System.out.println("You cannot withdraw your application as the project is already closed.");
+            return false;
+        }
+
+        // Check if user has already requested a withdrawal
+        List<String[]> withdrawalRequests = null;
+        try {
+            withdrawalRequests = readCSV(WITHDRAWAL_PATH);
+        } catch (IOException e) {
+            System.out.println("Error reading withdrawal requests: " + e.getMessage());
+        }
+        if (withdrawalRequests != null) {
+            for (String[] request : withdrawalRequests) {
+                if (request[0].trim().equals(applicant.getUserID())) {
+                    System.out.println("You have already requested a withdrawal for project " + projname + ".");
+                    return false;
+                }
+            }
+        }
+
+        // Proceed making withdrawal request
+        System.out.println("You are about to withdraw your application for project " + projname + ".");
+        System.out.print("Are you sure? (Y/N): ");
+        String confirmation = scanner.nextLine().trim();
+        if (confirmation.equalsIgnoreCase("N")) {
+            System.out.println("Withdrawal cancelled.");
+            return false;
+        }
+
+        String[] withdrawalRequest = {
+                applicant.getUserID(),
+                projname,
+                project.getManager(),        
+        };
+        // Append withdrawal request to CSV file
+        appendToCSV(WITHDRAWAL_PATH, withdrawalRequest);
+        return true;
    
+    }
+
 }
 
 
