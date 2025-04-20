@@ -2,21 +2,22 @@ package main.control.dataManagers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import main.control.viewFilters.IFilterProjectsByUserGroup;
 import main.control.InputManager;
 
-import main.control.viewFilters.IViewFilter;
 import main.control.viewFilters.ViewFilterFactory;
 import main.entity.Applicant;
 import main.entity.Enquiry;
 import main.entity.Officer;
 import main.entity.Project;
 
-public class EnquiryManager {
+public class EnquiryManager extends DataManager {
     private static final String ENQ_CSV_PATH = "data/processed/enquiries.csv";
     private static final int COL_USER_NAME = 0;
     private static final int COL_USER_ID = 1;
@@ -35,7 +36,7 @@ public class EnquiryManager {
         }
     }
 
-    // Public method
+    // Public method to fetch all enquiries
     public static List<String[]> getFetchAll() {
         return EnquiryManager.fetchAll();
     }
@@ -52,8 +53,22 @@ public class EnquiryManager {
         System.out.println();
     }
 
+    private static void printHandlingEnquiry(String[] enquiry) {
+        System.out.printf("%-10s %-10s %-10s%n",
+        "Username", "User ID", "Project Name");
+        System.out.println("=".repeat(140));
+        System.out.printf("%-10s %-10s %-10s%n",
+            enquiry[COL_USER_NAME],
+            enquiry[COL_USER_ID],
+            enquiry[COL_PROJECT_NAME]);
+        System.out.println("Question:  " + enquiry[COL_QUESTION]);
+        System.out.println("Answer:    "+ enquiry[COL_ANSWER]);
+        System.out.println("=".repeat(140));
+        System.out.println();
+    }
+
     // Returns an editable or deletable enquiry
-    private static String[] isMutable(String userId, Scanner scanner) {
+    private static String[] isMutable(String userID, Scanner scanner) {
         List<String[]> enquiries = getFetchAll(); // Gets all enquiries from file
         if (enquiries == null || enquiries.isEmpty()) { // No enquiries in file
             System.out.println("No enquiries.");
@@ -62,10 +77,10 @@ public class EnquiryManager {
 
         List<String[]> mutableEnquiries = new ArrayList<>();
         for (String[] mutableEnquiry : enquiries) {
-            if (mutableEnquiry[COL_USER_ID].equalsIgnoreCase(userId) && // Finding enquiries by User ID
+            if (mutableEnquiry[COL_USER_ID].equalsIgnoreCase(userID) && // Finding enquiries by User ID
             mutableEnquiry[COL_ANSWER].equalsIgnoreCase("nil"))  {// If enquiry has no answer
                 
-                    mutableEnquiries.add(mutableEnquiry);
+                mutableEnquiries.add(mutableEnquiry);
             }
         }
         if (mutableEnquiries.isEmpty()) { // No enquiries
@@ -73,6 +88,7 @@ public class EnquiryManager {
             return null;
         }
 
+        System.out.println("Choose: ");
         for (int i = 0; i < mutableEnquiries.size(); i++) { // Printing enquiries for user to choose from
             System.out.println((i + 1) + ". ");
             printEnquiry(mutableEnquiries.get(i), true);
@@ -80,6 +96,45 @@ public class EnquiryManager {
 
         int choice = InputManager.promptUserChoice(scanner, 1, mutableEnquiries.size()); // Asking for choice
         String[] selectedEnquiry = mutableEnquiries.get(choice - 1);
+        return selectedEnquiry;
+    }
+
+    // Returns a repliable enquiry
+    private static String[] isRepliable(Officer officer, Scanner scanner) {
+        List<Project> handling = officer.getHandling();
+        if (handling == null || handling.isEmpty()) {
+            System.out.println("No handling projects"); // No projects
+            return null;
+        }
+        List<String[]> enquiries = getFetchAll(); // Gets all enquiries from file
+        if (enquiries == null || enquiries.isEmpty()) { // No enquiries in file
+            System.out.println("No enquiries.");
+            return null;
+        }
+
+        List<String[]> repliableEnquiries = new ArrayList<>();
+        for (Project project : handling) {
+            for (String[] enquiry : enquiries) {
+                if (enquiry[COL_PROJECT_NAME].equalsIgnoreCase(project.getProjectName()) && // Finding enquiries by project name
+                    enquiry[COL_ANSWER].equalsIgnoreCase("nil")) { // Enquiry already has answer
+
+                    repliableEnquiries.add(enquiry);
+                }
+            }
+        }
+        if (repliableEnquiries.isEmpty()) {
+            System.out.println("No enquiries.");
+            return null;
+        }
+
+        System.out.println("Choose: ");
+        for (int i = 0; i < repliableEnquiries.size(); i++) { // Printing enquiries for user to choose from
+            System.out.println((i + 1) + ". ");
+            printEnquiry(repliableEnquiries.get(i), true);
+        }
+
+        int choice = InputManager.promptUserChoice(scanner, 1, repliableEnquiries.size()); // Asking for choice
+        String[] selectedEnquiry = repliableEnquiries.get(choice - 1);
         return selectedEnquiry;
     }
 
@@ -132,10 +187,11 @@ public class EnquiryManager {
         DataManager.appendToCSV(ENQ_CSV_PATH, newEnquiry);
     }
 
+    // Choose between viewing, editing and deleting enquiries
     public static void viewEditDeleteEnquiries(Applicant applicant, Scanner scanner) {
-        System.out.println("1. View enquiries.");
-        System.out.println("2. Edit enquiries.");
-        System.out.println("3. Delete enquiries.");
+        System.out.println("1. View enquiries");
+        System.out.println("2. Edit enquiries");
+        System.out.println("3. Delete enquiries");
         int choice = InputManager.promptUserChoice(scanner, 1, 3);
         switch (choice) {
             case 1 -> viewEnquiries(applicant, scanner);
@@ -149,6 +205,8 @@ public class EnquiryManager {
                 boolean isSuccessful = deleteEnquiry(applicant, scanner);
                 if (isSuccessful) {
                     System.out.println("Successfully deleted!");
+                } else {
+                    System.out.println("Failed to delete.");
                 }
             }
         }
@@ -183,7 +241,7 @@ public class EnquiryManager {
                 return;
             }
             case 2 -> {
-                IViewFilter viewInterface = ViewFilterFactory.getViewFilter(applicant.filterType);
+                IFilterProjectsByUserGroup viewInterface = ViewFilterFactory.getProjectByMartialStatus(applicant.getMarried());
                 List<Project> validProjects = viewInterface.getValidProjects();
                 if (validProjects == null || validProjects.isEmpty()) { // No projects available
                     System.out.println("No projects available.");
@@ -226,9 +284,20 @@ public class EnquiryManager {
 
         System.out.print("New Question: ");
         String question = scanner.nextLine();
-        selectedEnquiry[COL_QUESTION] = question; // Replacing old question with new question
+        String[] updatedEnquiry = Arrays.copyOf(selectedEnquiry, selectedEnquiry.length); // Deep copy
+        updatedEnquiry[COL_QUESTION] = question;
+        
+        List<String[]> enquiries = getFetchAll();
+        List<String[]> updatedEnquiries = enquiries.stream()
+            .map(row -> Arrays.equals(row, selectedEnquiry) ? updatedEnquiry : row)
+            .collect(Collectors.toList());
 
-        // TODO: write back to file
+        try {
+            writeCSV(ENQ_CSV_PATH, updatedEnquiries);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + ENQ_CSV_PATH);
+            e.printStackTrace();
+        }
         return true;
     }
 
@@ -240,7 +309,20 @@ public class EnquiryManager {
         }
 
         System.out.println("Type 'confirm' to confirm: ");
-        // TODO: delete from file
+        String confirm = scanner.nextLine();
+        if (!confirm.equalsIgnoreCase("confirm")) return false;
+
+        List<String[]> enquiries = getFetchAll();
+        List<String[]> updatedEnquiries = enquiries.stream()
+            .filter(row -> !Arrays.equals(row, selectedEnquiry))
+            .collect(Collectors.toList());
+
+        try {
+            writeCSV(ENQ_CSV_PATH, updatedEnquiries);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + ENQ_CSV_PATH);
+            e.printStackTrace();
+        }
         return true;
     }
 
@@ -259,50 +341,41 @@ public class EnquiryManager {
         for (Project project : projects) {
             for (String[] enquiry : enquiries) {
                 if (enquiry[COL_PROJECT_NAME].equalsIgnoreCase(project.getProjectName())) { // Finding enquiries by project name
-                    System.out.printf("%-10s %-15s %-10s%n",
-                    "Username", "User ID", "Project Name");
-                    System.out.println("=".repeat(140));
-                    System.out.printf("%-10s %-15s %-10s%n",
-                        enquiry[COL_USER_NAME],
-                        enquiry[COL_USER_ID],
-                        enquiry[COL_PROJECT_NAME]);
-                    System.out.println("Question:  " + enquiry[COL_QUESTION]);
-                    System.out.println("Answer:    "+ enquiry[COL_ANSWER]);
-                    System.out.println("=".repeat(140));
-                    System.out.println();
+                    printHandlingEnquiry(enquiry);
                     foundEnquiry = true;
                 }
             }
         }
         if (!foundEnquiry) {
-            System.out.print("No enquiries.");
+            System.out.println("No enquiries.");
         }
 
         System.out.println();
     }
 
     // Used by officers to reply to enquiries
-    public static boolean replyEnquiry(Officer officer, Enquiry enquiry, Scanner scanner) {
-        List<Project> handling = officer.getHandling();
-        boolean foundEnquiry = false;
-        for (Project project : handling) {
-            if (project.getProjectName().equalsIgnoreCase(enquiry.getProjectName())) { // If enquiry comes from a project being handled
-                foundEnquiry = true;
-            }
-        }
-        if (!foundEnquiry) {
-            System.out.println("No such enquiry found.");
+    public static boolean replyEnquiry(Officer officer, Scanner scanner) {
+        String[] selectedEnquiry = isRepliable(officer, scanner);
+        if (selectedEnquiry == null) {
             return false;
         }
-        
-        if (!enquiry.getAnswer().equalsIgnoreCase("nil")) { // If enquiry already has an answer
-            System.out.println("Enquiry already has reply.");
-            return false;
-        }
-        
+
         System.out.print("Reply: "); // Asking for reply
         String answer = scanner.nextLine();
-        enquiry.setAnswer(answer);
+        String[] updatedEnquiry = Arrays.copyOf(selectedEnquiry, selectedEnquiry.length); // Deep copy
+        updatedEnquiry[COL_ANSWER] = answer;
+        
+        List<String[]> enquiries = getFetchAll();
+        List<String[]> updatedEnquiries = enquiries.stream()
+            .map(row -> Arrays.equals(row, selectedEnquiry) ? updatedEnquiry : row)
+            .collect(Collectors.toList());
+
+        try {
+            writeCSV(ENQ_CSV_PATH, updatedEnquiries);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + ENQ_CSV_PATH);
+            e.printStackTrace();
+        }
         return true;
     }
 
