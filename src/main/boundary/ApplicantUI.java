@@ -16,7 +16,7 @@ import main.entity.Project;
 import java.util.Scanner;
 import java.util.List;
 
-public class ApplicantUI implements IusergroupUI {
+public class ApplicantUI implements IUserGroupUI {
 
      private static final String applicantMenu = """
                 
@@ -104,7 +104,6 @@ public class ApplicantUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-
                 case 6 -> {
                     Boolean isSuccessful = ApplicationManager.requestWithdrawal(applicant, scanner);
                     if (!isSuccessful) {
@@ -116,7 +115,6 @@ public class ApplicantUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-
                 case 7 -> {
                     Boolean isSuccessful = EnquiryManager.createEnquiry(applicant, scanner);
 
@@ -129,9 +127,10 @@ public class ApplicantUI implements IusergroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
-
                 case 8 -> {
-                    EnquiryManager.viewEnquiries(applicant, scanner);
+                    EnquiryManager.viewEditDeleteEnquiries(applicant, scanner);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
                 }
                 case 9 -> System.out.println("Exiting....");
 

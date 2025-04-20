@@ -15,7 +15,7 @@ import main.control.dataManagers.DataManager;
 import java.util.List;
 import java.util.Scanner;
 
-public class ManagerUI implements IusergroupUI {
+public class ManagerUI implements IUserGroupUI {
 
     private static final String managerMenu = """
                 

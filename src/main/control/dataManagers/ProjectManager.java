@@ -12,7 +12,7 @@ import main.entity.Project;
 
 public class ProjectManager extends DataManager {
     // Constants for file paths and column indices
-    private static final String PROJ_CSV_PATH = "data/processed/projectList.csv";
+    private static final String PROJ_CSV_PATH = "data/processed/projects.csv";
     private static final int COL_NAME = 0;
     private static final int COL_NEIGHBORHOOD = 1;
     private static final int COL_2_ROOM = 2;
