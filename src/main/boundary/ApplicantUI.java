@@ -1,6 +1,7 @@
 package main.boundary;
 
 import main.control.dataManagers.UserManager;
+import main.control.InputManager;
 import main.control.dataManagers.ApplicationManager;
 import main.control.dataManagers.BookingManager;
 import main.control.dataManagers.EnquiryManager;
@@ -40,9 +41,7 @@ public class ApplicantUI implements IusergroupUI {
             // Print UI
             System.out.println("<< Logged in as applicant: " + username + " >>");
             System.out.println(applicantMenu);
-            System.out.print("Input: ");
-            choice = scanner.nextInt();
-            scanner.nextLine();
+            choice = InputManager.promptUserChoice(scanner, 1, 10);
 
             switch (choice) {
                 case 1 -> {

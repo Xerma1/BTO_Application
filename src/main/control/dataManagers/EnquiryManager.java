@@ -67,7 +67,7 @@ public class EnquiryManager {
             }
         }
         if (mutableEnquiries.isEmpty()) { // No enquiries
-            System.out.println("No enquiries editable.");
+            System.out.println("No enquiries changeable.");
             return null;
         }
 
