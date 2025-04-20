@@ -1,15 +1,19 @@
 package main.boundary;
 
 import main.control.dataManagers.UserManager;
+import main.control.ProjectSorter;
 import main.control.dataManagers.ApplicationManager;
 import main.control.dataManagers.BookingManager;
 import main.control.dataManagers.EnquiryManager;
+import main.control.viewFilters.IFilterProjectsByUserGroup;
 import main.control.viewFilters.IViewFilter;
 import main.control.viewFilters.ViewFilterFactory;
 import main.entity.Applicant;
 import main.entity.User;
+import main.entity.Project;
 
 import java.util.Scanner;
+import java.util.List;
 
 public class ApplicantUI implements IusergroupUI {
 
@@ -50,10 +54,27 @@ public class ApplicantUI implements IusergroupUI {
                     scanner.nextLine();
                 }
                 case 2 -> {
-                    IViewFilter viewInterface = ViewFilterFactory.getViewFilter(applicant.filterType);
+                    IFilterProjectsByUserGroup viewInterface1 = ViewFilterFactory.getProjectByMartialStatus(applicant.getMarried());
                     System.out.println("Showing all active projects available to you: ");
                     System.out.println();
-                    viewInterface.view();
+                    List<Project> projects = viewInterface1.getValidProjects(); // First get valid projects
+
+                    // Sort them by applicant's existing sortType
+                    projects = ProjectSorter.sort(projects, applicant); 
+                    
+                    // Then view them using the filter type
+                    IViewFilter viewInterface2 = ViewFilterFactory.getViewFilterType(applicant.getMarried()); 
+                    viewInterface2.view(projects);
+                    
+                    // Ask users if they want to sort the projects in a new way
+                    System.out.println("Would you like to sort the projects in a different way? (y/n)");
+                    String sortChoice = scanner.nextLine();
+                    if (sortChoice.equalsIgnoreCase("y")) {
+                        SortAndReturnUI sortAndReturnUI = new SortAndReturnUI();
+                        sortAndReturnUI.viewSortedProject(scanner, projects, applicant);
+                    } else {
+                        System.out.println("Returning to main menu...");
+                    }
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }

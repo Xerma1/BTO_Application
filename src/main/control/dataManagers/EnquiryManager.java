@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
+import main.control.viewFilters.IFilterProjectsByUserGroup;
 import main.control.viewFilters.IViewFilter;
 import main.control.viewFilters.ViewFilterFactory;
 import main.entity.Applicant;
@@ -25,7 +26,7 @@ public class EnquiryManager {
         System.out.print("Enter question: ");
         String question = scanner.nextLine();
 
-        IViewFilter viewInterface = ViewFilterFactory.getViewFilter(applicant.getFilterType());
+        IFilterProjectsByUserGroup viewInterface = ViewFilterFactory.getProjectByMartialStatus(applicant.getMarried());
         List<Project> validProjects = viewInterface.getValidProjects();
 
         boolean projectFound = false;

@@ -19,7 +19,8 @@ public class BookingManager {
     private static enum status {
         PENDING, SUCCESSFUL, UNSUCCESSFUL, BOOKED
     }
-     public static boolean initiateBooking(Applicant applicant, Scanner scanner) {
+    
+    public static boolean initiateBooking(Applicant applicant, Scanner scanner) {
 
         // Get the application details of applicant
         String[] application = null;

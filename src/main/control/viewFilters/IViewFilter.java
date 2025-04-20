@@ -4,9 +4,6 @@ import java.util.List;
 import main.entity.Project;
 
 public interface IViewFilter {
-
-    public void view();
-    public default void view(List<Project> projects) {};
-    public List<Project> getValidProjects();
+    public void view(List<Project> projects); // View the projects based on the filter criteria
        
 }

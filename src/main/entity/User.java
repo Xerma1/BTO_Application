@@ -8,18 +8,20 @@ public class User {
     private String name;
     private String userID;
     private int age;
-    private boolean married;
+    private String married;
     private String password;
     private String accessLevel;
+    private String filterType; // default filter type
 
     //constructor
-    public User(String name, String userID, int age, boolean married, String password, String accessLevel) {
+    public User(String name, String userID, int age, String married, String password, String accessLevel, String filterType) {
         this.name = name;
         this.userID = userID;
         this.age = age;
         this.married = married;
         this.password = password;
         this.accessLevel = accessLevel;
+        this.filterType = filterType;
     }
 
     public void changePassword(Scanner scanner) {
@@ -52,7 +54,7 @@ public class User {
         return age;
     }
 
-    public boolean getMarried(){
+    public String getMarried(){
         return married;
     }
 
@@ -62,5 +64,9 @@ public class User {
 
     public String getAccessLevel(){
         return accessLevel;
+    }
+
+    public String getFilterType(){
+        return filterType;
     }
 }

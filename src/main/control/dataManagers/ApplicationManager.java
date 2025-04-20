@@ -1,6 +1,6 @@
 package main.control.dataManagers;
 
-import main.control.viewFilters.IViewFilter;
+import main.control.viewFilters.IFilterProjectsByUserGroup;
 import main.control.viewFilters.ViewFilterFactory;
 import main.control.TimeManager;
 import main.entity.Application.ApplicationStatus;
@@ -49,7 +49,7 @@ public class ApplicationManager extends DataManager {
 
         // Cleared to proceed with application
         // Get valid projects based on filter type
-        IViewFilter viewInterface = ViewFilterFactory.getViewFilter(applicant.filterType);
+        IFilterProjectsByUserGroup viewInterface = ViewFilterFactory.getProjectByMartialStatus(applicant.getMarried());
         List<Project> validProjects = viewInterface.getValidProjects();
 
         // Ask for project name
@@ -101,7 +101,7 @@ public class ApplicationManager extends DataManager {
                 applicant.getName(),
                 applicant.getUserID(),
                 String.valueOf(applicant.getAge()),
-                applicant.getMarried() ? "Married" : "Single",
+                applicant.getMarried(),
                 projName,
                 roomType,
                 roomDetails[2], // Price
