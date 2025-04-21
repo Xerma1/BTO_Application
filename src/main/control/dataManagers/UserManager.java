@@ -102,3 +102,104 @@ public class UserManager extends DataManager {
         UserManager._writePassword(userID, newPassword);
     }
 }
+
+public class HDBManager extends User {
+    private List<Project> createdProjects;
+
+    public HDBManager(String name, String nric, int age, String maritalStatus) {
+        super(name, nric, age, maritalStatus);
+        this.createdProjects = new ArrayList<>();
+    }
+
+    public Project createProject(String name, String neighborhood, int twoRoomUnits, int threeRoomUnits,
+                                 Date openingDate, Date closingDate) {
+        for (Project p : createdProjects) {
+            if (p.isWithinPeriod(openingDate, closingDate)) {
+                System.out.println("Manager already handling a project during this period.");
+                return null;
+            }
+        }
+        Project project = new Project(name, neighborhood, twoRoomUnits, threeRoomUnits,
+                                      openingDate, closingDate, this);
+        createdProjects.add(project);
+        return project;
+    }
+
+    public void editProject(Project project, String newName, String newNeighborhood) {
+        project.setName(newName);
+        project.setNeighborhood(newNeighborhood);
+    }
+
+    public void deleteProject(Project project) {
+        if (createdProjects.remove(project)) {
+            System.out.println("Project deleted.");
+        } else {
+            System.out.println("Project not found.");
+        }
+    }
+
+    public void toggleProjectVisibility(Project project, boolean isVisible) {
+        project.setVisible(isVisible);
+    }
+
+    public void approveOfficer(Project project, HDBOfficer officer) {
+        if (project.getAvailableOfficerSlots() > 0) {
+            project.addOfficer(officer);
+            System.out.println("Officer approved.");
+        } else {
+            System.out.println("No officer slots available.");
+        }
+    }
+
+    public void approveApplicant(Application app) {
+        if (app.getProject().canAllocate(app.getFlatType())) {
+            app.setStatus("Successful");
+            app.getProject().allocateFlat(app.getFlatType());
+        } else {
+            app.setStatus("Unsuccessful");
+        }
+    }
+
+    public void handleWithdrawal(Application app, boolean approve) {
+        if (approve) {
+            app.setStatus("Withdrawn");
+            app.getProject().releaseFlat(app.getFlatType());
+        } else {
+            System.out.println("Withdrawal rejected.");
+        }
+    }
+
+    public void generateReport(List<Application> applications, String filterCategory) {
+        for (Application app : applications) {
+            if (filterCategory.equals("married") && app.getApplicant().getMaritalStatus().equals("Married")) {
+                System.out.println(app.getSummary());
+            }
+            // Add other filters as needed
+        }
+    }
+
+    public void viewAllProjects(List<Project> allProjects) {
+        for (Project p : allProjects) {
+            System.out.println(p);
+        }
+    }
+
+    public void viewAndReplyToEnquiries(Project project, String reply) {
+        for (Enquiry e : project.getEnquiries()) {
+            if (!e.isAnswered()) {
+                System.out.println("Q: " + e.getQuestion());
+                e.setAnswer(reply);
+                System.out.println("Replied.");
+            }
+        }
+    }
+
+    public List<Project> getCreatedProjects() {
+        return createdProjects;
+    }
+
+    @Override
+    public boolean canApply() {
+        return false;
+    }
+}
