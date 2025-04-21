@@ -102,4 +102,3 @@ public class UserManager extends DataManager {
         UserManager._writePassword(userID, newPassword);
     }
 }
-
