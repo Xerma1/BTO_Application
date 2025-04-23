@@ -4,11 +4,13 @@ import main.control.viewFilters.IFilterProjectsByUserGroup;
 import main.control.viewFilters.ViewFilterFactory;
 import main.control.TimeManager;
 import main.entity.Application.ApplicationStatus;
+import main.entity.Manager;
 import main.entity.Applicant;
 import main.entity.Officer;
 import main.entity.Project;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -208,6 +210,126 @@ public class ApplicationManager extends DataManager {
    
     }
 
+    public static void manageApplications(Scanner scanner, Manager manager) {
+        try {
+            // Fetch all applications
+            List<String[]> applications = fetchAllApplications();
+            List<String[]> updatedApplications = new ArrayList<>(); // Holds all applications to be written back
+
+            System.out.println("Pending Applications for Your Projects:");
+            System.out.printf("%-5s %-15s %-15s %-20s %-15s%n", "ID", "Name", "NRIC", "Project", "Room Type");
+            System.out.println("=".repeat(80));
+
+            int id = 1;
+            List<String[]> pendingApplications = new ArrayList<>(); // Holds all pending applications
+            for (String[] application : applications) {
+                if (application.length < 10) {
+                    continue; // Skip invalid rows
+                }
+
+                if (application[9].equalsIgnoreCase("PENDING")) { // Check for pending status
+                    String projectName = application[4];
+                    Project project = ProjectManager.getProjectByName(projectName);
+
+                    // Check if the manager is handling the project
+                    if (project != null && project.getManager().equalsIgnoreCase(manager.getName())) {
+                        System.out.printf("%-5d %-15s %-15s %-20s %-15s%n", id, application[0], application[1], projectName, application[5]);
+                        pendingApplications.add(application);
+                        id++;
+                    } else {
+                        updatedApplications.add(application); // Add pending applications not managed by this manager
+                    }
+                } else {
+                    updatedApplications.add(application); // Add non-pending applications
+                }
+            }
+
+            if (pendingApplications.isEmpty()) {
+                System.out.println("No pending applications found for your projects.");
+                return;
+            }
+
+            // Prompt the manager to approve or reject an application
+            System.out.print("Enter the ID of the application to manage (or 0 to cancel): ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear the newline character
+
+            if (choice == 0) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
+
+            if (choice < 1 || choice > pendingApplications.size()) {
+                System.out.println("Invalid ID. Operation cancelled.");
+                return;
+            }
+
+            // Get the selected application
+            String[] selectedApplication = pendingApplications.get(choice - 1);
+            String applicantName = selectedApplication[0];
+            String projectName = selectedApplication[4];
+            String roomType = selectedApplication[5];
+
+            // Check room availability
+            Project project = ProjectManager.getProjectByName(projectName);
+            if (project == null) {
+                System.out.println("Project not found.");
+                return;
+            }
+
+            int roomIndex = roomType.equalsIgnoreCase("2-room") ? 0 : 1;
+            String[] roomDetails = project.getFlatTypes().get(roomIndex);
+            int availableRooms = Integer.parseInt(roomDetails[1]);
+
+            if (availableRooms <= 0) {
+                // Automatically reject the application
+                selectedApplication[9] = "UNSUCCESSFUL"; // Update status to unsuccessful
+                System.out.println("Not enough rooms available for the requested room type. Application automatically rejected.");
+            } else {
+                // Prompt for approval or rejection
+                System.out.print("Approve or reject this application? (approve/reject): ");
+                String decision = scanner.nextLine().trim();
+
+                if (decision.equalsIgnoreCase("approve")) {
+                    selectedApplication[9] = "SUCCESSFUL"; // Update status to successful
+
+                    // Decrement the available rooms for the requested room type
+                    roomDetails[1] = String.valueOf(availableRooms - 1);
+                    List<String[]> flatTypes = new ArrayList<>(project.getFlatTypes());
+                    flatTypes.set(roomIndex, roomDetails);
+                    project.setFlatTypes(flatTypes);
+
+                    // Update the project in the CSV file
+                    ProjectManager.updateProject(project);
+
+                    System.out.println("Application approved and project updated.");
+                } else if (decision.equalsIgnoreCase("reject")) {
+                    selectedApplication[9] = "UNSUCCESSFUL"; // Update status to unsuccessful
+                    System.out.println("Application rejected.");
+                } else {
+                    System.out.println("Invalid decision. Operation cancelled.");
+                    return;
+                }
+            }
+
+            // Add the updated application to the list
+            updatedApplications.add(selectedApplication);
+
+            // Add the remaining pending applications that were not chosen
+            for (String[] pendingApplication : pendingApplications) {
+                if (pendingApplication != selectedApplication) {
+                    updatedApplications.add(pendingApplication);
+                }
+            }
+
+            // Write the updated applications back to the CSV file
+            writeCSV(APPL_CSV_PATH, updatedApplications);
+            System.out.println("Changes saved successfully!");
+
+        } catch (IOException e) {
+            System.err.println("Error managing applications: " + e.getMessage());
+        }
+    }
 }
 
 

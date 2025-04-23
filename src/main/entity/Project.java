@@ -1,6 +1,7 @@
 package main.entity;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class Project {
     private String projectName;
@@ -57,10 +58,53 @@ public class Project {
     }
 
     public String[] getOfficers() {
-        return officers;
+        List<String> officerList = new ArrayList<>();
+        for (String officer : officers) {
+            if (officer != null && !officer.isEmpty()) {
+                officerList.add(officer);
+            }
+        }
+        return officerList.toArray(new String[0]);
     }
 
     public boolean isVisibility() {
         return visibility;
+    }
+
+    // Setter methods
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public void setNeighbourhood(String neighbourhood) {
+        this.neighbourhood = neighbourhood;
+    }
+
+    public void setFlatTypes(List<String[]> flatTypes) {
+        this.flatTypes = flatTypes;
+    }
+
+    public void setOpenDate(String openDate) {
+        this.openDate = openDate;
+    }
+
+    public void setCloseDate(String closeDate) {
+        this.closeDate = closeDate;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
+
+    public void setOfficerSlots(int officerSlots) {
+        this.officerSlots = officerSlots;
+    }
+
+    public void setOfficers(String[] officers) {
+        this.officers = officers;
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
     }
 }

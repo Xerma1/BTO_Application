@@ -1,2 +1,3 @@
-Applicant ID,Project name,Type Of Flat booked,Officers,Status
-S1234567A,acacia breeze,2-room,"Daniel,Emily",PENDING
+"Applicant ID","Project name","Type Of Flat booked","Officers","Status"
+"S1234567A","acacia breeze","2-room","Daniel,Emily","SUCCESSFUL"
+"S3456789E","Acacia Breeze","2-room","Daniel,Emily","SUCCESSFUL"

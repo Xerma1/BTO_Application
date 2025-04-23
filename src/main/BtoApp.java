@@ -9,7 +9,11 @@ import main.boundary.*;
 
 import java.util.Scanner;
 
-
+/**
+ * The main class for the BTO application manager.
+ * This class handles user login and delegates control to the appropriate user interface
+ * based on the selected user group (Applicant, Officer, or Manager).
+ */
 public class BtoApp {
     
     private static final String UI = """

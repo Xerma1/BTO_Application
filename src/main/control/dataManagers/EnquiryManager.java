@@ -14,6 +14,7 @@ import main.control.InputManager;
 import main.control.viewFilters.ViewFilterFactory;
 import main.entity.Applicant;
 import main.entity.Enquiry;
+import main.entity.Manager;
 import main.entity.Officer;
 import main.entity.Project;
 
@@ -39,6 +40,26 @@ public class EnquiryManager extends DataManager {
     // Public method to fetch all enquiries
     public static List<String[]> getFetchAll() {
         return EnquiryManager.fetchAll();
+    }
+
+    // Method to view all enquiries across all projects
+    public static void viewAllEnquiries() {
+        // Fetch all enquiries
+        List<String[]> enquiries = getFetchAll();
+        if (enquiries == null || enquiries.isEmpty()) {
+            System.out.println("No enquiries found.");
+            return;
+        }
+    
+        // Print header
+        System.out.println("Viewing all enquiries: ");
+        System.out.println("=".repeat(160));
+    
+        // Print each enquiry using the same UI structure as view by officer
+        for (int i = 1; i < enquiries.size(); i++) { // Start from index 1 to skip the header
+            String[] enquiry = enquiries.get(i);
+            printHandlingEnquiry(enquiry); // Reuse the printHandlingEnquiry method
+        }
     }
 
     // Prints enquiries either by User or by Project for applicants
@@ -142,6 +163,19 @@ public class EnquiryManager extends DataManager {
 
     // Used by applicants to submit enquiries
     public static boolean createEnquiry(Applicant applicant, Scanner scanner) {
+        // Fetch all projects
+        List<Project> projects = ProjectManager.getFetchAll();
+        if (projects == null || projects.isEmpty()) {
+            System.out.println("No projects available.");
+            return false;
+        }
+
+        // Display available projects
+        System.out.println("Available projects:");
+        for (Project project : projects) {
+            System.out.println("- " + project.getProjectName());
+        }
+
         System.out.print("Enter project name: ");
         String projectName = scanner.nextLine();
         System.out.print("Enter question: ");
@@ -379,4 +413,74 @@ public class EnquiryManager extends DataManager {
         return true;
     }
 
+    // Used by managers to view and reply to enquiries
+    public static void viewAndReplyToEnquiries(Manager manager, Scanner scanner) {
+        // Fetch all enquiries
+        List<String[]> enquiries = getFetchAll();
+        if (enquiries == null || enquiries.isEmpty()) {
+            System.out.println("No enquiries found.");
+            return;
+        }
+    
+        // Fetch all projects managed by the manager
+        List<Project> projects = ProjectManager.getFetchAll();
+        if (projects == null || projects.isEmpty()) {
+            System.out.println("No projects found.");
+            return;
+        }
+    
+        // Filter enquiries for projects managed by the manager and not replied to
+        List<String[]> managerEnquiries = new ArrayList<>();
+        for (String[] enquiry : enquiries) {
+            for (Project project : projects) {
+                if (project.getManager().equalsIgnoreCase(manager.getName()) &&
+                    enquiry[COL_PROJECT_NAME].equalsIgnoreCase(project.getProjectName()) &&
+                    enquiry[COL_ANSWER].equalsIgnoreCase("nil")) { // Only include enquiries with no reply
+                    managerEnquiries.add(enquiry);
+                }
+            }
+        }
+    
+        if (managerEnquiries.isEmpty()) {
+            System.out.println("No unanswered enquiries found for your projects.");
+            return;
+        }
+    
+        // Allow the manager to select an enquiry to reply to
+        final String[] selectedEnquiry;
+        while (true) {
+            System.out.println("Choose an enquiry to reply to:");
+            for (int i = 0; i < managerEnquiries.size(); i++) {
+                System.out.println((i + 1) + ". ");
+                printEnquiry(managerEnquiries.get(i), true); // Reuse the printEnquiry method for consistent UI
+            }
+
+            int choice = InputManager.promptUserChoice(scanner, 1, managerEnquiries.size());
+            String[] tempEnquiry = managerEnquiries.get(choice - 1);
+            if (tempEnquiry != null) {
+                selectedEnquiry = tempEnquiry;
+                break;
+            }
+        }
+    
+        // Prompt for a reply
+        System.out.print("Reply: ");
+        String reply = scanner.nextLine().trim();
+    
+        // Update the enquiry with the reply
+        String[] updatedEnquiry = Arrays.copyOf(selectedEnquiry, selectedEnquiry.length); // Deep copy
+        updatedEnquiry[COL_ANSWER] = reply;
+    
+        // Update the enquiries in the CSV file
+        List<String[]> updatedEnquiries = enquiries.stream()
+            .map(row -> Arrays.equals(row, selectedEnquiry) ? updatedEnquiry : row)
+            .collect(Collectors.toList());
+    
+        try {
+            writeCSV("data/processed/enquiries.csv", updatedEnquiries);
+            System.out.println("Reply saved successfully!");
+        } catch (IOException e) {
+            System.err.println("Error saving reply: " + e.getMessage());
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package main.entity;
 
 public class Applicant extends User {
-    //private applicantApplication application;
 
     private static final String FILTER_ALL = "married";
     private static final String FILTER_SINGLE = "single";

@@ -6,6 +6,7 @@ import main.control.InputManager;
 import main.control.dataManagers.ApplicationManager;
 import main.control.dataManagers.BookingManager;
 import main.control.dataManagers.EnquiryManager;
+import main.control.dataManagers.OfficerRegistrationManager;
 import main.control.dataManagers.UserManager;
 import main.control.viewFilters.*;
 import main.entity.Officer;
@@ -14,6 +15,7 @@ import main.entity.User;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class OfficerUI implements IUserGroupUI {
 
@@ -70,13 +72,18 @@ public class OfficerUI implements IUserGroupUI {
                     System.out.println();
                     List<Project> projects = viewInterface1.getValidProjects(); // First get valid projects
 
-                    // Sort them by applicant's existing sortType
-                    projects = ProjectSorter.sort(projects, officer); 
-                    
+                    // Sort them by officer's existing sortType
+                    projects = ProjectSorter.sort(projects, officer);
+
+                    // Filter projects to include only those with visibility toggled to true
+                    projects = projects.stream()
+                            .filter(Project::isVisibility) // Keep only visible projects
+                            .collect(Collectors.toList());
+
                     // Then view them using the filter type
-                    IViewFilter viewInterface2 = ViewFilterFactory.getViewFilterType(officer.getMarried()); 
+                    IViewFilter viewInterface2 = ViewFilterFactory.getViewFilterType(officer.getMarried());
                     viewInterface2.view(projects);
-                    
+
                     // Ask users if they want to sort the projects in a new way
                     System.out.println("Would you like to sort the projects in a different way? (y/n)");
                     String sortChoice = scanner.nextLine();
@@ -89,6 +96,23 @@ public class OfficerUI implements IUserGroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
+                case 3 -> {
+                    boolean isRegistered = OfficerRegistrationManager.registerOfficer(officer, scanner);
+                    if (isRegistered) {
+                        System.out.println("Registration successful! Your status is pending approval.");
+                    } else {
+                        System.out.println("Registration failed. Please check the eligibility criteria.");
+                    }
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 4 -> {
+                    OfficerRegistrationManager.viewOfficerRegistrationStatus(officer);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
                 case 5 -> {
                     officer.viewHandling();
                     System.out.println("Press 'enter' to continue...");
@@ -107,6 +131,11 @@ public class OfficerUI implements IUserGroupUI {
                     else {
                         System.out.println("Reply successful!");
                     }
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+                case 8 -> {
+                    BookingManager.bookFlatForClient(scanner, officer);
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
@@ -131,6 +160,17 @@ public class OfficerUI implements IUserGroupUI {
                     }
                     else {
                         System.out.println("Booking successful!");
+                    }
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+                case 12 -> {
+                    Boolean isSuccessful = ApplicationManager.requestWithdrawal(officer, scanner);
+                    if (!isSuccessful) {
+                        System.out.println("Withdrawl request is unsuccessful.");
+                    }
+                    else {
+                        System.out.println("Withdrawl request successfully lodged!");
                     }
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
