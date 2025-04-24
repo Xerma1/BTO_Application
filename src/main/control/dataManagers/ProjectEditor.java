@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ProjectEditor {
+public class ProjectEditor extends ProjectManager {
 
     // Method to create a new project
-    public static void createProject(Scanner scanner) {
+    public static void addProject(Scanner scanner) {
         System.out.println("Enter project details:");
 
         System.out.print("Project Name: ");
@@ -64,7 +64,7 @@ public class ProjectEditor {
     }
 
     // Method to edit an existing project
-    public static void editProject(Scanner scanner) {
+    public static void updateProject(Scanner scanner) {
         System.out.print("Enter the name of the project to edit: ");
         String projectName = scanner.nextLine();
 

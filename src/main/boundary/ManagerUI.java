@@ -91,8 +91,8 @@ public class ManagerUI implements IUserGroupUI {
                     int subChoice = InputManager.promptUserChoice(scanner, 1, 3);
 
                     switch (subChoice) {
-                        case 1 -> ProjectEditor.createProject(scanner);
-                        case 2 -> ProjectEditor.editProject(scanner);
+                        case 1 -> ProjectEditor.addProject(scanner);
+                        case 2 -> ProjectEditor.updateProject(scanner);
                         case 3 -> ProjectEditor.deleteProject(scanner);
                         default -> System.out.println("Invalid choice.");
                     }
