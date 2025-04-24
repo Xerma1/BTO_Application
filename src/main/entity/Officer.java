@@ -7,7 +7,6 @@ import main.control.dataManagers.ProjectManager;
 import main.control.viewFilters.ViewAll;
 
 public class Officer extends Applicant {
-    private boolean hasActiveProj;
 
     //constructor
     public Officer(String name, String userID, int age, String married, String password, String accessLevel, String filterType) {
