@@ -95,13 +95,15 @@ public class ApplicationManager extends DataManager {
             }
 
             // Check if the officer has any active projects
-            List<Project> handling = ((Officer)applicant).getHandling();
-            for (Project project : handling) {
-                if (TimeManager.isValidDate(project.getOpenDate().trim(), project.getCloseDate().trim())) {
-                    System.out.println("You cannot apply for project " + projName + " as you have active projects.");
-                    return false;
+            List<Project> handling = ((Officer) applicant).getHandling();
+            if (handling != null && !handling.isEmpty()) {
+                for (Project project : handling) {
+                    if (TimeManager.isValidDate(project.getOpenDate().trim(), project.getCloseDate().trim())) {
+                        System.out.println("You cannot apply for project " + projName + " as you have active projects.");
+                        return false;
+                    }
                 }
-            }
+            } 
        }
 
         // Asking for room type
