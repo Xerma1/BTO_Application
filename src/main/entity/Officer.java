@@ -31,6 +31,10 @@ public class Officer extends Applicant {
 
     public void viewHandling() {
         List<Project> handling = this.getHandling();
+        if (handling == null || handling.isEmpty()) {
+            System.out.println("No handling projects available.");
+            return;
+        }
         ViewAll viewInterface = new ViewAll();
         viewInterface.view(handling);
     }
