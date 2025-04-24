@@ -20,9 +20,16 @@ BTO_Application/
 │── docs/                    # Documentation folder
 │    ├── UML/                # UML diagrams
 │    ├── javadoc/            # javadoc
+│    ├── report/             # report
 │── .gitignore               # Specifies files to be ignored by Git
 │── README.md                # Project documentation (overview, instructions)
 ```
-Project assignment pdf is in docs/ for easy access
 
+Hi, we are FCS6 group 4!
+
+Final report is located in BTO_Application/docs/report/
+
+Go to this link for the javadoc: https://Xerma1.github.io/BTO_Application/javadoc/ or go to BTO_Application/docs/javadoc/index.html
+
+UML diagrams are all located in BTO_Application/docs/UML/
 
