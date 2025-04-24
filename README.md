@@ -27,9 +27,11 @@ BTO_Application/
 
 Hi, we are FCS6 group 4!
 
+Github: https://github.com/Xerma1/BTO_Application/tree/main
+
 Final report is located in BTO_Application/docs/report/
 
-Go to this link for the javadoc: https://Xerma1.github.io/BTO_Application/javadoc/ or go to BTO_Application/docs/javadoc/index.html
+javadoc: https://Xerma1.github.io/BTO_Application/javadoc/ or go to BTO_Application/docs/javadoc/index.html
 
 UML diagrams are all located in BTO_Application/docs/UML/
 
