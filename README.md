@@ -7,7 +7,9 @@ BTO_Application/
 │    ├── main/                # Main application code
 │    │    ├── boundary/       # Stores all boundary classes
 │    │    ├── control/        # Stores all control classes
-|    │    │    ├── filters/        # Stores all view filter classes
+|    │    │    ├── dataManagers/        # Stores managers
+|    │    │    ├── login/        # Stores login logic
+|    │    │    ├── viewFilters/        # Stores all view filter classes
 │    │    ├── entity/         # Stores all entity classes
 │    │    │── btoApp.java     # The application java code
 │    ├── test/                # Test cases
