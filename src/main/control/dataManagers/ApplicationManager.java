@@ -20,7 +20,6 @@ import java.util.Scanner;
  */
 public class ApplicationManager extends DataManager {
     private static final String APPL_CSV_PATH = "data/processed/bto_applications.csv";
-    private static final String OFF_RSG_PATH = "data/processed/officer_registrations.csv";
     private static final String WITHDRAWAL_PATH = "data/processed/withdrawal_requests.csv";
 
     private static List<String[]> fetchAllApplications() {
@@ -85,15 +84,25 @@ public class ApplicationManager extends DataManager {
             return false;
         }
         
-        // Finally, check if applicant is not also registered as an officer for the same project
+        // Additional checks for officer applicants
         if (applicant instanceof Officer) {
             boolean isRegistered = ProjectManager.isRegistered((Officer) applicant, validProject);
 
+            // Check if applicant is not also registered as an officer for the same project
             if (isRegistered) {
                 System.out.println("You cannot apply for project " +  projName + " as you are already registered as an officer for this project.");
                 return false;
             }
-        }
+
+            // Check if the officer has any active projects
+            List<Project> handling = ((Officer)applicant).getHandling();
+            for (Project project : handling) {
+                if (TimeManager.isValidDate(project.getOpenDate().trim(), project.getCloseDate().trim())) {
+                    System.out.println("You cannot apply for project " + projName + " as you have active projects.");
+                    return false;
+                }
+            }
+       }
 
         // Asking for room type
         String roomType = ProjectManager.askRoomType(applicant, scanner);
