@@ -1,5 +1,9 @@
 package main.entity;
 
+/**
+ * Represents an enquiry made by a user in the BTO application system.
+ * An enquiry contains information about the user, the project, and the question asked.
+ */
 public class Enquiry {
     private String userName;
     private String userID;

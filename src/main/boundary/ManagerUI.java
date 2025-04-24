@@ -2,8 +2,14 @@ package main.boundary;
 
 
 import main.control.ProjectSorter;
+import main.control.ReportGenerator;
 import main.control.InputManager;
+import main.control.dataManagers.ApplicationManager;
+import main.control.dataManagers.EnquiryManager;
+import main.control.dataManagers.OfficerRegistrationManager;
+import main.control.dataManagers.ProjectEditor;
 import main.control.dataManagers.UserManager;
+import main.control.dataManagers.WithdrawalManager;
 import main.control.viewFilters.*;
 import main.entity.Manager;
 import main.entity.Project;
@@ -12,6 +18,11 @@ import main.entity.User;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Provides the user interface for managers.
+ * Allows managers to create, edit, and delete projects, manage officer registrations,
+ * handle applications, and generate reports.
+ */
 public class ManagerUI implements IUserGroupUI {
 
     private static final String managerMenu = """
@@ -77,6 +88,81 @@ public class ManagerUI implements IUserGroupUI {
                     System.out.println("Press 'enter' to continue...");
                     scanner.nextLine();
                 }
+
+                case 3 -> {
+                    System.out.println("1. Create a new project");
+                    System.out.println("2. Edit an existing project");
+                    System.out.println("3. Delete a project");
+                    int subChoice = InputManager.promptUserChoice(scanner, 1, 3);
+
+                    switch (subChoice) {
+                        case 1 -> ProjectEditor.addProject(scanner);
+                        case 2 -> ProjectEditor.updateProject(scanner);
+                        case 3 -> ProjectEditor.deleteProject(scanner);
+                        default -> System.out.println("Invalid choice.");
+                    }
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 4 -> {
+                    ProjectEditor.toggleVisibility(scanner);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 5 -> {
+                    System.out.println("1. View pending officer registrations");
+                    System.out.println("2. View approved officer registrations");
+                    System.out.println("3. View all officer registrations");
+                    int subChoice = InputManager.promptUserChoice(scanner, 1, 3);
+                
+                    switch (subChoice) {
+                        case 1 -> OfficerRegistrationManager.viewOfficerRegistrations("pending");
+                        case 2 -> OfficerRegistrationManager.viewOfficerRegistrations("approved");
+                        case 3 -> OfficerRegistrationManager.viewOfficerRegistrations("all");
+                        default -> System.out.println("Invalid choice.");
+                    }
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 6 -> {
+                    OfficerRegistrationManager.manageOfficerRegistrations(scanner, manager);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 7 -> {
+                    ApplicationManager.manageApplications(scanner, manager);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 8 -> {
+                    WithdrawalManager.manageWithdrawalRequests(scanner, manager);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 9 -> {
+                    ReportGenerator.generateApplicantReport(scanner);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 10 -> {
+                    EnquiryManager.viewAllEnquiries();
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+
+                case 11 -> {
+                    EnquiryManager.viewAndReplyToEnquiries(manager, scanner);
+                    System.out.println("Press 'enter' to continue...");
+                    scanner.nextLine();
+                }
+                
                 case 12 -> System.out.println("Exiting....");
                 default -> System.out.print("default");
             }

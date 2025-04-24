@@ -10,11 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/*
- * This class's role is to handle on file read/write methods that the app uses
- * Current methods: utility read/write CSV, search(), getSearch(), changePassword(), 
+/**
+ * This class's role is to handle on file read/write methods that the app uses 
  */
-
 public class DataManager {
     // Utility method to read CSV file. Return unmodifiable list of defensive copies
     public static List<String[]> readCSV(String filePath) throws IOException {
@@ -70,25 +68,34 @@ public class DataManager {
             System.out.println("Error: Cannot append an empty or null row to the CSV file.");
             return;
         }
-
+    
         try (RandomAccessFile raf = new RandomAccessFile(filePath, "rw")) {
-            // Move to the end of the file
             long fileLength = raf.length();
             if (fileLength > 0) {
                 raf.seek(fileLength - 1);
-                // Check if the last character is a newline
                 if (raf.readByte() != '\n') {
-                    raf.writeBytes("\n"); // Add a newline if it doesn't exist
+                    raf.writeBytes("\n");
                 }
             }
-
-            // Append the new row
-            String csvLine = String.join(",", dataRow);
+    
+            List<String> processedFields = new ArrayList<>();
+            for (String field : dataRow) {
+                // Strip existing outer quotes
+                String trimmed = field;
+                if (trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
+                    trimmed = trimmed.substring(1, trimmed.length() - 1);
+                }
+                // Escape any internal quotes
+                String escaped = trimmed.replace("\"", "\"\"");
+                // Always wrap in quotes
+                processedFields.add("\"" + escaped + "\"");
+            }
+    
+            String csvLine = String.join(",", processedFields);
             raf.writeBytes(csvLine + "\n");
         } catch (IOException e) {
             System.out.println("Error writing to CSV: " + e.getMessage());
         }
     }
-
 }
 

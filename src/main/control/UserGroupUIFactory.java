@@ -2,6 +2,10 @@ package main.control;
 
 import main.boundary.*;
 
+/**
+ * Factory class to create instances of user group UIs.
+ * This class is responsible for creating the appropriate UI based on the user group.
+ */
 public class UserGroupUIFactory {
     public static IUserGroupUI getUI(String usergroup) {
         return switch (usergroup) {

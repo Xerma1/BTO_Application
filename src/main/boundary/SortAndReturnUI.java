@@ -13,6 +13,9 @@ import main.control.ProjectSorter;
 import main.control.viewFilters.IViewFilter;
 import main.control.viewFilters.ViewFilterFactory;
 
+/**
+ * SortAndReturnUI class to handle the user interface for sorting projects.
+ */
 public class SortAndReturnUI {
     private static final String FILEPATH_USERS = "data/processed/users.csv";
     private static final String UI = 

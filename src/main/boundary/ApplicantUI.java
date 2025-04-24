@@ -14,9 +14,18 @@ import main.entity.User;
 import main.entity.Project;
 
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.List;
 
+/**
+ * Provides the user interface for applicants.
+ * Allows applicants to interact with the system, including viewing projects,
+ * applying for flats, managing bookings, and handling enquiries.
+ */
 public class ApplicantUI implements IUserGroupUI {
+    /*
+     * This class is the UI for the applicant user group.
+     */
 
      private static final String applicantMenu = """
                 
@@ -59,12 +68,17 @@ public class ApplicantUI implements IUserGroupUI {
                     List<Project> projects = viewInterface1.getValidProjects(); // First get valid projects
 
                     // Sort them by applicant's existing sortType
-                    projects = ProjectSorter.sort(projects, applicant); 
-                    
+                    projects = ProjectSorter.sort(projects, applicant);
+
+                    // Filter projects to include only those with visibility toggled to true
+                    projects = projects.stream()
+                            .filter(Project::isVisibility) // Keep only visible projects
+                            .collect(Collectors.toList());
+
                     // Then view them using the filter type
-                    IViewFilter viewInterface2 = ViewFilterFactory.getViewFilterType(applicant.getMarried()); 
+                    IViewFilter viewInterface2 = ViewFilterFactory.getViewFilterType(applicant.getMarried());
                     viewInterface2.view(projects);
-                    
+
                     // Ask users if they want to sort the projects in a new way
                     System.out.println("Would you like to sort the projects in a different way? (y/n)");
                     String sortChoice = scanner.nextLine();

@@ -10,6 +10,10 @@ import main.entity.Applicant;
 import main.entity.Officer;
 import main.entity.Project;
 
+/**
+ * Manages operations related to projects in the BTO application system.
+ * Includes functionality for creating, editing, deleting, and retrieving projects.
+ */
 public class ProjectManager extends DataManager {
     // Constants for file paths and column indices
     private static final String PROJ_CSV_PATH = "data/processed/projects.csv";
@@ -136,4 +140,102 @@ public class ProjectManager extends DataManager {
     public static Project getProjectByName(String projectName){
         return ProjectByName(projectName);
     }
+
+    // Method to add a new project
+    public static void addProject(Project project) {
+        String[] newProject = {
+            project.getProjectName(),
+            project.getNeighbourhood(),
+            project.getFlatTypes().get(0)[0], // Type 1
+            project.getFlatTypes().get(0)[1], // Number of units for Type 1
+            project.getFlatTypes().get(0)[2], // Selling price for Type 1
+            project.getFlatTypes().get(1)[0], // Type 2
+            project.getFlatTypes().get(1)[1], // Number of units for Type 2
+            project.getFlatTypes().get(1)[2], // Selling price for Type 2
+            project.getOpenDate(),
+            project.getCloseDate(),
+            project.getManager(),
+            String.valueOf(project.getOfficerSlots()),
+            String.join(",", project.getOfficers()), // Officers as a comma-separated string
+            String.valueOf(project.isVisibility())
+        };
+
+        DataManager.appendToCSV(PROJ_CSV_PATH, newProject);
+    }
+
+    // Method to update an existing project
+    public static void updateProject(Project updatedProject) {
+        try {
+            List<String[]> projects = DataManager.readCSV(PROJ_CSV_PATH);
+            List<String[]> updatedProjects = new ArrayList<>();
+
+            boolean projectFound = false;
+            for (String[] project : projects) {
+                if (project[0].equalsIgnoreCase(updatedProject.getProjectName())) { // Match by project name
+                    // Update the project details
+                    updatedProjects.add(new String[] {
+                        updatedProject.getProjectName(),
+                        updatedProject.getNeighbourhood(),
+                        updatedProject.getFlatTypes().get(0)[0], // Type 1
+                        updatedProject.getFlatTypes().get(0)[1], // Number of units for Type 1
+                        updatedProject.getFlatTypes().get(0)[2], // Selling price for Type 1
+                        updatedProject.getFlatTypes().get(1)[0], // Type 2
+                        updatedProject.getFlatTypes().get(1)[1], // Number of units for Type 2
+                        updatedProject.getFlatTypes().get(1)[2], // Selling price for Type 2
+                        updatedProject.getOpenDate(),
+                        updatedProject.getCloseDate(),
+                        updatedProject.getManager(),
+                        String.valueOf(updatedProject.getOfficerSlots()),
+                        String.join(",", updatedProject.getOfficers()), // Officers as a comma-separated string
+                        String.valueOf(updatedProject.isVisibility())
+                    });
+                    projectFound = true;
+                } else {
+                    updatedProjects.add(project); // Keep the existing project
+                }
+            }
+
+            if (!projectFound) {
+                System.out.println("Project not found.");
+                return;
+            }
+
+            DataManager.writeCSV(PROJ_CSV_PATH, updatedProjects);
+        } catch (IOException e) {
+            System.err.println("Error updating project: " + e.getMessage());
+        }
+    }
+
+    // Method to delete a project
+    public static boolean deleteProject(String projectName) {
+        try {
+            List<String[]> projects = DataManager.readCSV(PROJ_CSV_PATH);
+            List<String[]> updatedProjects = new ArrayList<>(projects);
+    
+            boolean projectFound = false;
+    
+            // Use an iterator to remove the project
+            var iterator = updatedProjects.iterator();
+            while (iterator.hasNext()) {
+                String[] project = iterator.next();
+                if (project[0].equalsIgnoreCase(projectName)) { // Match by project name
+                    iterator.remove(); // Remove the project
+                    projectFound = true;
+                    break; // Exit the loop once the project is found and removed
+                }
+            }
+    
+            if (projectFound) {
+                DataManager.writeCSV(PROJ_CSV_PATH, updatedProjects);
+                return true;
+            } else {
+                return false;
+            }
+    
+        } catch (IOException e) {
+            System.err.println("Error deleting project: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

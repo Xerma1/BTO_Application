@@ -7,6 +7,11 @@ import main.entity.Project;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ViewSingle class implements IFilterProjectsByUserGroup and IViewFilter interfaces.
+ * This class provides functionality to view projects that are suitable for single users.
+ * It retrieves all projects from the ProjectManager and filters them based on the number of 2-room flats available.
+ */
 public class ViewSingle implements IViewFilter, IFilterProjectsByUserGroup {
 
     @Override
