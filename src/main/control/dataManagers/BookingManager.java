@@ -11,7 +11,7 @@ import main.entity.Officer;
 import main.entity.Project;
 
 
-public class BookingManager {
+public class BookingManager extends DataManager {
 
     private static final int COL_PROJ_NAME = 4; 
     private static final int COL_FLAT_TYPE = 5; 
@@ -74,7 +74,7 @@ public class BookingManager {
             status.PENDING.name()                       // Booking outcome
         };
 
-        DataManager.appendToCSV(FILEPATH_BOOKING, bookingRequest);
+        appendToCSV(FILEPATH_BOOKING, bookingRequest);
         System.out.println("Booking request has been submitted successfully.");
         return true;
     
@@ -86,7 +86,7 @@ public class BookingManager {
         // Check if applicant is already booking a flat
         List<String[]> bookingRequests;
         try {
-            bookingRequests = DataManager.readCSV(FILEPATH_BOOKING);
+            bookingRequests = readCSV(FILEPATH_BOOKING);
         } catch (IOException e) {
             System.out.println("Error reading booking requests: " + e.getMessage());
             return false;
@@ -105,7 +105,7 @@ public class BookingManager {
         // Check if applicant is in booking_rquest.csv
         List<String[]> bookingRequests;
         try {
-            bookingRequests = DataManager.readCSV(FILEPATH_BOOKING);
+            bookingRequests = readCSV(FILEPATH_BOOKING);
         } catch (IOException e) {
             System.out.println("Error reading booking requests: " + e.getMessage());
             return false;
@@ -158,7 +158,7 @@ public class BookingManager {
             Project selectedProject = officerProjects.get(projectChoice - 1);
 
             // Fetch all booking requests
-            List<String[]> bookingRequests = DataManager.readCSV("data/processed/booking_requests.csv");
+            List<String[]> bookingRequests = readCSV("data/processed/booking_requests.csv");
             List<String[]> projectBookingRequests = new ArrayList<>();
 
             // Filter booking requests for the selected project
@@ -218,7 +218,7 @@ public class BookingManager {
             }
 
             // Update the application status
-            List<String[]> applications = DataManager.readCSV(FILEPATH_BTO);
+            List<String[]> applications = readCSV(FILEPATH_BTO);
             for (String[] application : applications) {
                 if (application[1].equalsIgnoreCase(clientID)) {
                     application[9] = "BOOKED";
@@ -226,11 +226,11 @@ public class BookingManager {
                 }
             }
             
-            DataManager.writeCSV(FILEPATH_BTO, applications);
+            writeCSV(FILEPATH_BTO, applications);
 
             // Update the booking request status
             selectedRequest[4] = "SUCCESSFUL";
-            DataManager.writeCSV(FILEPATH_BOOKING, bookingRequests);
+            writeCSV(FILEPATH_BOOKING, bookingRequests);
 
             System.out.println("Flat booked successfully for client.");
         } catch (IOException e) {
