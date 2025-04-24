@@ -17,10 +17,10 @@ BTO_Application/
 │    ├── processed/          # Datasets to read and write from program
 │── docs/                    # Documentation folder
 │    ├── UML/                # UML diagrams
-│    ├── //add documentation        # Project-related PDFs and written report
+│    ├── javadoc/            # javadoc
 │── .gitignore               # Specifies files to be ignored by Git
 │── README.md                # Project documentation (overview, instructions)
 ```
 Project assignment pdf is in docs/ for easy access
 
-so far login, change password, view projects by martial status is done T^T
+
