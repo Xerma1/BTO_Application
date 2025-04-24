@@ -1,5 +1,9 @@
 package main.entity;
 
+/**
+ * Represents an applicant in the BTO application system.
+ * An applicant is a user who can apply for flats, view projects, and manage their bookings.
+ */
 public class Applicant extends User {
 
     private static final String FILTER_ALL = "married";

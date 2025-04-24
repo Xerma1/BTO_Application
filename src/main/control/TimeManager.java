@@ -6,7 +6,10 @@ import java.time.format.DateTimeFormatter; // Handles date and time formatting
 import java.time.format.DateTimeParseException; // Handles exceptions that may occur during date parsing
 
 
-// Uses local timezone for simplicity
+/**
+ * This class manages time-related functionalities, including checking if the current date is within a specified range,
+ * and checking if two date ranges overlap.
+ */
 public class TimeManager {
     
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy");

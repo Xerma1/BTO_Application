@@ -3,6 +3,10 @@ package main.control.login;
 import main.control.dataManagers.UserManager;
 import main.entity.User;
 
+/**
+ * LoginManager class to handle user login functionality.
+ * This class is responsible for validating user credentials and checking access levels.
+ */
 public class LoginManager {
     
     // Login function that checks whether the given username and password matches

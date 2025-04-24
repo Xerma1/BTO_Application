@@ -5,6 +5,11 @@ import java.util.List;
 import main.control.dataManagers.ProjectManager;
 import main.entity.Project;
 
+/**
+ * ViewAll class implements IFilterProjectsByUserGroup and IViewFilter interfaces.
+ * This class provides functionality to view all projects without any filtering.
+ * It retrieves all projects from the ProjectManager and displays their details.
+ */
 public class ViewAll implements IFilterProjectsByUserGroup, IViewFilter {
 
     

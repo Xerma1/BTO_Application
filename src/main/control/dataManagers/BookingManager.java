@@ -10,7 +10,10 @@ import main.entity.Applicant;
 import main.entity.Officer;
 import main.entity.Project;
 
-
+/**
+ * Manages booking operations for flats in the BTO application system.
+ * Includes functionality for handling booking requests and updating booking statuses.
+ */
 public class BookingManager extends DataManager {
 
     private static final int COL_PROJ_NAME = 4; 

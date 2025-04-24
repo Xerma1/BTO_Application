@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Manages withdrawal requests in the BTO application system.
+ * Includes functionality for handling and processing withdrawal requests from applicants.
+ */
 public class WithdrawalManager extends DataManager {
     private static final String WITHDRAWAL_CSV_PATH = "data/processed/withdrawal_requests.csv";
     private static final String APPLICATION_CSV_PATH = "data/processed/bto_applications.csv";

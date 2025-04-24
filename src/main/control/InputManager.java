@@ -2,6 +2,10 @@ package main.control;
 
 import java.util.Scanner;
 
+/**
+ * InputManager class to handle user input and validation.
+ * This class provides methods to prompt the user for input and validate it.
+ */
 public class InputManager {
     public static int promptUserChoice(Scanner scanner, int min, int max) {
     int choice = -1;

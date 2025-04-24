@@ -18,6 +18,11 @@ import main.entity.User;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Provides the user interface for managers.
+ * Allows managers to create, edit, and delete projects, manage officer registrations,
+ * handle applications, and generate reports.
+ */
 public class ManagerUI implements IUserGroupUI {
 
     private static final String managerMenu = """

@@ -4,6 +4,10 @@ import java.util.Scanner;
 
 import main.control.dataManagers.UserManager;
 
+/**
+ * Represents a user in the system.
+ * This class contains user information and methods to manage user data.
+ */
 public class User {
     private String name;
     private String userID;

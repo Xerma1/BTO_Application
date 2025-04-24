@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Scanner;
 import main.control.dataManagers.ApplicationManager;
 
+/**
+ * Generates reports for the BTO application system.
+ * Includes functionality for creating reports on applicants and their bookings.
+ */
 public class ReportGenerator {
     public static void generateApplicantReport(Scanner scanner) {
         try {

@@ -1,5 +1,6 @@
 package main.entity;
 
+
 public class Manager extends User {
     public String filterType = "married";
     //constructor

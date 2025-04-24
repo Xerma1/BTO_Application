@@ -7,6 +7,11 @@ import main.entity.Project;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * ViewMarried class implements IFilterProjectsByUserGroup and IViewFilter interfaces.
+ * This class provides functionality to view projects suitable for married couples.
+ * It retrieves all projects from the ProjectManager and filters them based on the availability of 2-room and 3-room flats.
+ */
 public class ViewMarried implements IViewFilter, IFilterProjectsByUserGroup {
     @Override
     public void view(List<Project> projects) {

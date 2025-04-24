@@ -18,6 +18,10 @@ import main.entity.Manager;
 import main.entity.Officer;
 import main.entity.Project;
 
+/**
+ * Manages enquiries in the BTO application system.
+ * Includes functionality for creating, viewing, replying to, and managing enquiries.
+ */
 public class EnquiryManager extends DataManager {
     private static final String ENQ_CSV_PATH = "data/processed/enquiries.csv";
     private static final int COL_USER_NAME = 0;

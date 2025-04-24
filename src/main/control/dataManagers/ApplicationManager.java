@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Manages BTO applications in the system.
+ * Includes functionality for applying for flats, viewing applications, and handling withdrawals.
+ */
 public class ApplicationManager extends DataManager {
     private static final String APPL_CSV_PATH = "data/processed/bto_applications.csv";
     private static final String OFF_RSG_PATH = "data/processed/officer_registrations.csv";

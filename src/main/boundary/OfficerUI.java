@@ -17,6 +17,11 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Provides the user interface for officers.
+ * Allows officers to manage projects, handle bookings for clients,
+ * and respond to enquiries related to their assigned projects.
+ */
 public class OfficerUI implements IUserGroupUI {
 
     private static final String officerMenu = """

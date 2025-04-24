@@ -8,6 +8,10 @@ import main.entity.Applicant;
 import main.entity.Officer;
 import main.entity.Manager;
 
+/**
+ * UserManager class provides functionality to manage user data.
+ * It allows fetching user details, creating new users, and updating user passwords.
+ */
 public class UserManager extends DataManager {
     // Constants for file paths and column indices
     private static final String USERS_CSV_PATH = "data/processed/users.csv";

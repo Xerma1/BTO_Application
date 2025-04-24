@@ -3,6 +3,9 @@ package main.entity;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Represents a BTO project in the application system.
+ */
 public class Project {
     private String projectName;
     private String neighbourhood;

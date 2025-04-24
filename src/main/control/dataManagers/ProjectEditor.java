@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * ProjectEditor class provides functionality to create, edit, delete, and toggle visibility of projects.
+ * It extends the ProjectManager class to overload the methods, giving a different way to view,edit and delete enquiries.
+ */
 public class ProjectEditor extends ProjectManager {
 
     // Method to create a new project

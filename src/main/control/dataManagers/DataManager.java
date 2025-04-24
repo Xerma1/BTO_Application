@@ -10,11 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/*
- * This class's role is to handle on file read/write methods that the app uses
- * Current methods: utility read/write CSV, search(), getSearch(), changePassword(), 
+/**
+ * This class's role is to handle on file read/write methods that the app uses 
  */
-
 public class DataManager {
     // Utility method to read CSV file. Return unmodifiable list of defensive copies
     public static List<String[]> readCSV(String filePath) throws IOException {

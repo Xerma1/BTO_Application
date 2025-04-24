@@ -10,6 +10,10 @@ import main.entity.Applicant;
 import main.entity.Officer;
 import main.entity.Project;
 
+/**
+ * Manages operations related to projects in the BTO application system.
+ * Includes functionality for creating, editing, deleting, and retrieving projects.
+ */
 public class ProjectManager extends DataManager {
     // Constants for file paths and column indices
     private static final String PROJ_CSV_PATH = "data/processed/projects.csv";

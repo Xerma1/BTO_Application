@@ -17,6 +17,11 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.List;
 
+/**
+ * Provides the user interface for applicants.
+ * Allows applicants to interact with the system, including viewing projects,
+ * applying for flats, managing bookings, and handling enquiries.
+ */
 public class ApplicantUI implements IUserGroupUI {
     /*
      * This class is the UI for the applicant user group.

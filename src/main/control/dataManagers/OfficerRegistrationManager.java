@@ -10,6 +10,10 @@ import main.entity.Officer;
 import main.entity.Manager;
 import main.entity.Project;
 
+/**
+ * Manages officer registrations in the BTO application system.
+ * Includes functionality for viewing, approving, and rejecting officer registrations.
+ */
 public class OfficerRegistrationManager extends DataManager {
     private static final String OFFICER_REG_CSV_PATH = "data/processed/officer_registrations.csv";
     private static final int COL_NAME = 0;

@@ -8,7 +8,10 @@ import main.control.dataManagers.DataManager;
 import main.control.viewFilters.ISortProjects;
 import main.control.viewFilters.sortTypes.SortFactory;
 
-
+/**
+ * Provides functionality to sort projects based on user preferences.
+ * Retrieves the user's sorting preference from a CSV file and applies the appropriate sorting algorithm.
+ */
 public class ProjectSorter {
 
     private static final String FILEPATH_USERS = "data/processed/users.csv";
